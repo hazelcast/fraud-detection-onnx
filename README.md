@@ -8,7 +8,7 @@ docker tag fraud-detection-onnx-hazelcast-onnx-debian <github-username>/<image-n
 docker push <github-username>/<image-name> 
 ```
 
-# Run a local container with the Hazelcat-Onnx image
+# Run a local container with the Hazelcast-Onnx image
 ```
 docker-compose -f run-hz-onnx-container.yml up -d
 ```
