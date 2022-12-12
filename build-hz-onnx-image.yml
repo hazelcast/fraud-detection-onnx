@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  hazelcast-onnx-debian:
+    build: hz-onnx-debian/.
+    platform: linux/amd64
+    ports:
+      - "5701:5701"
+    env_file:
+      - .env
