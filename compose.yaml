@@ -1,0 +1,29 @@
+services:
+  hazelcast:
+    image: hazelcast/hazelcast:5.2.1
+    environment:
+      JAVA_OPTS: -Dhazelcast.config=/opt/project/config/hazelcast.yaml
+    volumes:
+      - ".:/opt/project"
+
+  mancenter:
+    volumes:
+      - ".:/opt/project"
+    ports:
+      - "8080:8080"
+    image: hazelcast/management-center:5.2.1
+
+  hazelcast-shell:
+    image: hazelcast/hazelcast:5.2.1
+    volumes:
+      - ".:/opt/project"
+    command: tail -f /dev/null  
+
+  auth-request-source:
+    image: amazoncorretto:11
+    volumes:
+      - ".:/opt/project"
+    command:  >
+      java -Dhazelcast.client.config=/opt/project/config/hazelcast-client.yaml 
+        -cp /opt/project/auth-request-source/target/auth-request-source-1.0-SNAPSHOT.jar 
+        hazelcast.solutions.fraud.AuthRequestSource

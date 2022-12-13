@@ -1,0 +1,10 @@
+hazelcast-client:
+  instance-name: auth-request-source
+  cluster-name: dev
+  network:
+    cluster-members:
+      - hazelcast:5701
+  connection-strategy:
+      async-start: false
+      reconnect-mode: ASYNC
+
