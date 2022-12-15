@@ -32,10 +32,15 @@ After a few seconds, you should see a "Transaction Loader Job" success message i
 
 # Load Customer and Merchant Features into Hazelcast
 
+WIP
+
 # Submit Model Inference Pipeline to Hazelcast
+
+WIP
 
 # Basic Model Monitoring in Grafana
 
+WIP
 
 ## (Optional) Building Your own Hazelcast-Onnx image
 ```
