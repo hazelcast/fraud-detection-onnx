@@ -23,7 +23,7 @@ To-Do
 docker-compose up -d
 ```
 
-# Load 2.8M Transactions into a Kafka Topic (Transactions)
+# Load 2.8M Transactions into Kafka
 ```
 cd transaction-loader 
 hz-cli submit -v -t localhost:5701 -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar \
