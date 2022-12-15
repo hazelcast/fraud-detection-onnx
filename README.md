@@ -3,13 +3,14 @@
 In this demo, you will:
 * Train a Fraud Detection model using LightGBM and Python 3.8  
     * Convert this model to ONNX
-* Deploy a complete Transaction Scoring Model Inference pipeline to Hazelcast featuring:
+* Deploy a complete Fraud Detection Inference pipeline to Hazelcast featuring:
     * Use of Hazelcast's low-latency data store to hold:
         * Customer and Merchant feature data
         * Feature engineering data needed to produce inputs for the Fraud Detection model
-    * Use of Hazelcast's stream processing capability to process an incoming stream of transactions
-    * Use of Hazelcast's stream processing capability to calculate real-time features (e.g. distance from home)
-    * Use of Hazelcast's platform compute capabilities to run your Fraud Detection Onnx Model inside the Hazelcast Cluster
+    * Use of Hazelcast's stream processing capability to:
+        * process an incoming stream of transactions
+        * calculate real-time features (e.g. distance from home)
+        * run the Fraud Detection Onnx Model inside the Hazelcast Cluster
     
 
 # Start Kakfa and Hazelcast containers
