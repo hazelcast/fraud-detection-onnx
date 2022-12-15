@@ -26,7 +26,7 @@ hz-cli submit -v -t localhost:5701 -c org.example.Main target/transaction-loader
     $(pwd) transaction_data_stream.csv localhost:9092
 ```
 
-After a few seconds, you should see a "Transaction Loading Job" message in the output
+After a few seconds, you should see a "Transaction Loader Job" success message in the output
 
 ![Transaction Loading Job Success Message](./images/transaction-loader-msg.png)
 
