@@ -1,0 +1,2 @@
+transaction-loader/small_transactions.csv filter=lfs diff=lfs merge=lfs -text
+transaction-loader/transaction_data_stream.csv filter=lfs diff=lfs merge=lfs -text
