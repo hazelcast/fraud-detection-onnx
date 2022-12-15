@@ -1,2 +1,8 @@
 *.DS_Store
 *.csv
+
+**/transaction-loader/target/classes/
+**/transaction-loader/target/generated-sources/
+**/transaction-loader/target/maven-status/
+**/transaction-loader/target/maven-archiver/
+**/transaction-loader/.idea/
