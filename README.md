@@ -1,5 +1,14 @@
-# fraud-detection-onnx
+# Fraud Detection With Hazelcast and ONNX
 
+In this demo, you will:
+* Train a LightGBM credit card fraud detection model in Python 3.8  
+    * Convert this model to ONNX
+* Deploy a complete Transaction Scoring Model Inference pipeline to Hazelcast featuring:
+    * Use of Hazelcast's low-latency to hold feature values and feature look-ups to model common feature transformation
+    * Use of Hazelcast's stream processing capability to process an incoming stream of transactions
+    * Use of Hazelcast's stream processing capability to calculate real-time features (e.g. distance from home)
+    * Use of Hazelcast's platform compute capabilities to execute your Fraud Detection Onnx Model inside the Hazelcast Cluster
+    
 
 # Start Kakfa and Hazelcast containers
 ```
