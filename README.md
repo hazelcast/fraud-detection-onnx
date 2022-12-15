@@ -8,9 +8,10 @@ In this demo, you will:
         * Customer and Merchant feature data
         * Feature engineering data needed to produce inputs for the Fraud Detection model
     * Use of Hazelcast's stream processing capability to:
-        * process an incoming stream of transactions
+        * process incoming stream of transactions
+        * perform feature engineering to turn features into model inputs
         * calculate real-time features (e.g. distance from home, time of day, day of week)
-        * run the Fraud Detection Onnx Model inside the Hazelcast Cluster
+        * run the Fraud Detection Onnx Model inside the Hazelcast
     
 
 # Start Kakfa and Hazelcast containers
