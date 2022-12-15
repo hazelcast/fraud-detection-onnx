@@ -12,7 +12,11 @@ In this demo, you will:
         * perform feature engineering to turn features into model inputs
         * calculate real-time features (e.g. distance from home, time of day, day of week)
         * run the Fraud Detection Onnx Model inside the Hazelcast
-    
+
+# Model Training
+
+To-Do
+
 
 # Start Kakfa and Hazelcast containers
 ```
