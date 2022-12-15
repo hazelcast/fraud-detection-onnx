@@ -30,9 +30,14 @@ After a few seconds, you should see a "Transaction Loader Job" success message i
 
 ![Transaction Loading Job Success Message](./images/transaction-loader-msg.png)
 
+# Load Customer and Merchant Features into Hazelcast
+
+# Submit Model Inference Pipeline to Hazelcast
+
+# Basic Model Monitoring in Grafana
 
 
-# (Optional) Building Your own Hazelcast-Onnx image
+## (Optional) Building Your own Hazelcast-Onnx image
 ```
 docker-compose -f build-hz-onnx-image.yml build
 docker tag fraud-detection-onnx-hazelcast-onnx-debian <github-username>/<image-name>
