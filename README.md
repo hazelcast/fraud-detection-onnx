@@ -9,7 +9,7 @@ In this demo, you will:
         * Feature engineering data needed to produce inputs for the Fraud Detection model
     * Use of Hazelcast's stream processing capability to:
         * process an incoming stream of transactions
-        * calculate real-time features (e.g. distance from home)
+        * calculate real-time features (e.g. distance from home, time of day, day of week)
         * run the Fraud Detection Onnx Model inside the Hazelcast Cluster
     
 
