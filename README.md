@@ -50,7 +50,7 @@ First navigate to the feature-data-loader directory
 ```
 cd ../feature-data-loader
 ```
-and run the following command (replacing your 192.168.0.135 with your own IP address)
+and run the following command (replacing 192.168.0.135 with your own IP address)
 ```
 hz-cli submit -v -t 192.168.0.135:5701 -c org.example.Main target/feature-data-loader-1.0-SNAPSHOT.jar 192.168.0.135:5701
 ```
