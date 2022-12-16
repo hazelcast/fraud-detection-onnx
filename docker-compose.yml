@@ -1,4 +1,6 @@
 version: "3.9"
+
+
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -30,8 +32,20 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       
-      
-      
-      
+  hazelcast-onnx:
+    #image: edsandovalhz/hazelcast-onnx (official image)
+    image: fraud-detection-onnx-hazelcast-onnx-debian
+    hostname: hazelcast-onnx
+    container_name: hazelcast-onnx
+    platform: linux/amd64
+    ports:
+      - "5701:5701"
+    volumes:
+      - ./feature-data-loader/hazelcast.yml:/opt/hazelcast/hazelcast.yml
+    environment:
+      - HAZELCAST_CONFIG=/opt/hazelcast/hazelcast.yml
+    
+#volumes:   
+  #config:
 
-#Source https://github.com/confluentinc/cp-all-in-one/blob/7.3.0-post/cp-all-in-one/docker-compose.yml
+  #Source https://github.com/confluentinc/cp-all-in-one/blob/7.3.0-post/cp-all-in-one/docker-compose.yml 

@@ -35,8 +35,26 @@ After a few seconds, you should see a "Transaction Loader Job" success message i
 ![Transaction Loading Job Success Message](./images/transaction-loader-msg.png)
 
 # Load Customer and Merchant Feature Data into Hazelcast
+You will use hz-cli, a Hazelcast client command to submit a series of feature data loading jobs.
 
-WIP
+Before you start, You will need to find your IP address.
+For MacOS, run this command
+```
+ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}' 
+```
+The output should be your IP address.
+I will use 192.168.0.135 as an example
+
+With your IP address, you can submit the Feature data loading jobs 
+First navigate to the feature-data-loader directory
+```
+cd ../feature-data-loader
+```
+and run the following command (replacing your 192.168.0.135 with your own IP address)
+```
+hz-cli submit -v -t 192.168.0.135:5701 -c org.example.Main target/feature-data-loader-1.0-SNAPSHOT.jar 192.168.0.135:5701
+```
+
 
 # Submit Model Inference Pipeline to Hazelcast
 

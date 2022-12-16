@@ -5,3 +5,7 @@
 **/transaction-loader/target/maven-status/
 **/transaction-loader/target/maven-archiver/
 **/transaction-loader/.idea/
+**/feature-data-loader/.idea/
+**/feature-data-loader/target/generated-sources/
+**/feature-data-loader/target/maven-status/
+**/feature-data-loader/target/maven-archiver/
