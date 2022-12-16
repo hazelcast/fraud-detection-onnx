@@ -11,7 +11,7 @@ In this demo, you will:
         * process incoming stream of transactions
         * perform feature engineering to turn features into model inputs
         * calculate real-time features (e.g. distance from home, time of day, day of week)
-        * run the Fraud Detection Onnx Model inside the Hazelcast
+        * run the Fraud Detection Onnx Model inside Hazelcast
 
 # Model Training
 
