@@ -35,7 +35,8 @@ After a few seconds, you should see a "Transaction Loader Job" success message i
 ![Transaction Loading Job Success Message](./images/transaction-loader-msg.png)
 
 # Load Customer and Merchant Feature Data into Hazelcast
-You will use hz-cli, a Hazelcast client command tool, to submit a series of feature data loading jobs
+You will use hz-cli, a Hazelcast client command tool, to submit a series of feature data loading jobs.
+These jobs will simply load the Merchant & customer data from JSON and CSV files into [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) 
 
 Before you start, You will need to find your IP address.
 For MacOS, run this command
