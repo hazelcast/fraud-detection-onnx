@@ -45,8 +45,8 @@ ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}'
 The output should be your IP address.
 I will use 192.168.0.135 as an example
 
-With your IP address, you can submit the Feature data loading jobs 
-First navigate to the feature-data-loader directory
+With your IP address, you can submit the Feature data loading jobs. 
+But first, you need to navigate to the feature-data-loader directory
 ```
 cd ../feature-data-loader
 ```
