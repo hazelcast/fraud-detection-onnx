@@ -39,14 +39,15 @@ COPY ./transaction_month/transaction_month_dict.json /opt/hazelcast/transaction_
 COPY ./transaction_hour/transaction_hour_dict.json /opt/hazelcast/transaction_hour/
 COPY ./transaction_weekday/transaction_weekday_dict.json /opt/hazelcast/transaction_weekday/
 COPY ./zip/zip_dict.json /opt/hazelcast/zip/
+
 #Customer and Merchant Feature data
 COPY ./customer_data.csv /opt/hazelcast/
 COPY ./merchant_data.csv /opt/hazelcast/
 
-#Example Onnx Model
+#Example Fraud Detection Onnx Model
 COPY ./lightgbm_fraud_detection_onnx /opt/hazelcast/
 
-#Onnx Libraries in Hazelcast Classpath
+#Place Onnx Libraries in Hazelcast's Classpath
 COPY ./onnxruntime-1.13.1.jar /opt/hazelcast/onnxruntime-1.13.1.jar
 COPY ./libonnxruntime.so /opt/hazelcast/lib/libonnxruntime.so
 COPY ./libonnxruntime.so.1.13.1 /opt/hazelcast/lib/libonnxruntime.so.1.13.1
