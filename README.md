@@ -56,7 +56,7 @@ hz-cli submit -v -t 192.168.0.135:5701 -c org.example.Main target/feature-data-l
 ```
 After a few seconds, you should see an output similar to
 
-![Feature LoaderSuccess Message](.images/feature-loader-msg.png)
+![Feature Loader Success Message](./images/feature-loader-msg.png)
 
 # Submit Model Inference Pipeline to Hazelcast
 
