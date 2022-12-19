@@ -105,14 +105,14 @@ You can see how the original transaction has been processed by the Fraud Detecti
 
 
 # Monitoring in Hazelcast
-You can start Hazelcast Management Center by navigating to localhost:8080\
+You can start Hazelcast Management Center by navigating to localhost:8080
 
-Create a connection to <YOUR IP ADDRESS>:5701
+Create a connection to `YOUR IP ADDRESS`:5701
 
 Find details of the Fraud Detection Inference Pipeline\
 ![Management Center showing Fraud Detection Inference Job](./images/mc.png)
 
-
+In this case, please note that Total Out / Last Minute Out refer to potential fraud cases only!
 
 # Monitoring in Grafana
 
