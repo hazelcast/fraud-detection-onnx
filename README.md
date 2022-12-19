@@ -23,7 +23,7 @@ To-Do
 docker-compose up -d
 ```
 
-# Load 2.8M Transactions into Kafka
+# Load 2.8M Transactions to a Kafka Topic
 ```
 cd transaction-loader 
 hz-cli submit -v -t 192.168.0.135:5701 -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar $(pwd) transaction_data_stream.csv localhost:9092
@@ -66,7 +66,6 @@ At a high-level, the pipeline executes the following steps:
 * Focus on "Potential Fraud" cases (e.g. filter those withfraud probability higher than a given Threshold e.g > 0.5)
 * Log these potential fraud cases for further analysis
 
-TO-DO PIPEPELINE DIAGRAM
 
 You can deploy the Fraud Detection pipeline by running:
 
@@ -78,10 +77,10 @@ If you check the logs for the hazelcast-onnx container, you should see some of t
 ```
 docker logs hazelcast-onnx
 ```
-You should see "potential fraud cases" similar to this\
+You should see "potential fraud cases"\\
 ![Potential Fraud Cases image](./images/potential-fraud-case.png)
 
-Notice the output generated contains information generated at multiple steps in the Fraud detection  pipeline!
+Notice the output generated contains information generated at different stages in the Fraud detection pipeline
 
 # QUESTION TIME:question:
 * Can you suggest reasons the model might be flagging the above transaction as potentially fraudulent?
