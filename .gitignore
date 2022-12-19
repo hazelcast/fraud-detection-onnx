@@ -9,3 +9,5 @@
 **/feature-data-loader/target/generated-sources/
 **/feature-data-loader/target/maven-status/
 **/feature-data-loader/target/maven-archiver/
+**/feature-data-loader/target/classes/
+feature-data-loader/target/classes/org/example/Main.class

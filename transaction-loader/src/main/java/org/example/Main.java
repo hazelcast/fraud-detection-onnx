@@ -40,10 +40,12 @@ public class Main {
             while (! hazelcastInstance.getJet().getJob("transactionLoader").getStatus().equals(JobStatus.COMPLETED)) {
                 Thread.sleep(3000);
             }
-            //hazelcastInstance.shutdown();
+
         } else {
             System.out.println("Expected 3 command line arguments: <transactionFileFolder> <transactionFileName> <kafkaserver:port>");
         }
+
+        hazelcastInstance.shutdown();
 
 
     }

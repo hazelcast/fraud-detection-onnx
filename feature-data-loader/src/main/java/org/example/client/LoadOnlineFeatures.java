@@ -1,11 +1,10 @@
-package org.example;
+package org.example.client;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.jet.Traversers;
 import com.hazelcast.jet.pipeline.*;
 import com.hazelcast.jet.pipeline.file.FileFormat;
 import com.hazelcast.jet.pipeline.file.FileSources;
-import com.hazelcast.map.IMap;
 import org.example.datamodel.Customer;
 import org.example.datamodel.Merchant;
 import org.example.util.Util;
@@ -15,7 +14,7 @@ import java.util.Map;
 
 import static org.example.util.Util.*;
 
-public class Main {
+public class LoadOnlineFeatures {
     public static void main(String[] args) throws InterruptedException {
         //arg[0] must be Hazelcast server:port (e.g. "192.168.0.135:5701")
         HazelcastInstance client = Util.getHazelClient(args[0]);
@@ -34,9 +33,10 @@ public class Main {
                 // Load Customer and Merchant Features into Hazelcast Maps
                 loadCustomerFeatureData(client);
                 loadMerchantFeatureData(client);
+                Thread.sleep(2000);
             }
         }
-        Thread.sleep(2000);
+
         client.shutdown();
         System.out.println("\n******************* All Feature Loading Jobs submitted to Hazelcast! *******************\n");
     }
@@ -124,11 +124,5 @@ public class Main {
         Util.submitJob(pipeline,client,"Merchant Features");
 
     }
-    private static boolean isOnlineFeatureDataLoaded(HazelcastInstance client) {
-        IMap<Long, Customer> customerIMap = client.getMap(Util.CUSTOMER_MAP);
-        if (customerIMap!=null) {
-            return (customerIMap.size() > 0);
-        }
-        return false;
-    }
+
 }

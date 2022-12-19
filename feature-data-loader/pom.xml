@@ -27,6 +27,21 @@
             <artifactId>hazelcast-jet-csv</artifactId>
             <version>5.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.hazelcast.jet</groupId>
+            <artifactId>hazelcast-jet-kafka</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.onnxruntime</groupId>
+            <artifactId>onnxruntime</artifactId>
+            <version>1.13.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-spatial</artifactId>
+            <version>8.4.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -36,9 +51,11 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>org.example.Main</mainClass>
+                    <mainClass>org.example.client.DeployFraudDetectionInference</mainClass>
                     <arguments>
                         <argument>192.168.0.135:5701</argument>
+                        <argument>broker:29092</argument>
+                        <argument>lightgbm_fraud_detection_onnx</argument>
                     </arguments>
                 </configuration>
             </plugin>

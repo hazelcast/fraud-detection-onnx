@@ -6,15 +6,21 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.jet.Job;
 import com.hazelcast.jet.config.JobConfig;
 import com.hazelcast.jet.pipeline.Pipeline;
+import com.hazelcast.map.IMap;
 import com.hazelcast.nio.serialization.genericrecord.GenericRecord;
-import org.example.Main;
+import com.hazelcast.org.json.JSONObject;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.example.client.DeployFraudDetectionInference;
+import org.example.client.LoadOnlineFeatures;
 import org.example.datamodel.Customer;
 import org.example.datamodel.Merchant;
+import org.example.fraudmodel.*;
+
+import java.util.Properties;
 
 public class Util {
 
     public static String BASE_DIR = "/opt/hazelcast/";
-    public static final String TRANSACTION_MAP = "transactionScoringRequestMap";
     public static final String GENDER_MAP = "genders";
     public static final String CATEGORY_MAP = "categories";
     public static final String JOB_MAP = "jobs";
@@ -91,7 +97,12 @@ public class Util {
         jobCfg.addClass(Merchant.class);
         jobCfg.addClass(Customer.class);
         jobCfg.addClass(Util.class);
-        jobCfg.addClass(Main.class);
+        jobCfg.addClass(LoadOnlineFeatures.class);
+        jobCfg.addClass(DeployFraudDetectionInference.class);
+        jobCfg.addClass(FraudDetectionRequest.class);
+        jobCfg.addClass(LightGBMFraudDetectorService.class);
+        jobCfg.addClass(FraudDetectionService.class);
+        jobCfg.addClass(FraudDetectionResponse.class);
 
         Job existingJob = client.getJet().getJob(jobName);
         if (existingJob!=null) {
@@ -105,4 +116,39 @@ public class Util {
         System.out.println("*************** Loading " + jobName + " to Hazelcast******************\n");
         client.getJet().newJob(p, jobCfg);
     }
+
+    public static boolean isOnlineFeatureDataLoaded(HazelcastInstance client) {
+        IMap<Long, Customer> customerIMap = client.getMap(Util.CUSTOMER_MAP);
+        if (customerIMap!=null) {
+            return (customerIMap.size() > 0);
+        }
+        return false;
+    }
+    public static Properties kafkaConsumerProps(String kafkaBroker) {
+        //kafkaBroker should be localhost:29092
+        Properties props = new Properties();
+        props.setProperty("bootstrap.servers", kafkaBroker);
+        props.setProperty("key.deserializer", StringDeserializer.class.getCanonicalName());
+        props.setProperty("value.deserializer", StringDeserializer.class.getCanonicalName());
+        props.setProperty("auto.offset.reset", "earliest");
+        return props;
+    }
+
+    public static Double calculateDistanceKms(double lat1, double long1, double lat2, double long2) {
+        return org.apache.lucene.util.SloppyMath.haversinMeters(lat1, long1, lat2, long2);
+    }
+
+    public static FraudDetectionRequest createFrom(JSONObject incomingTransaction, Customer c, Merchant m, Double distanceKms) {
+        FraudDetectionRequest fraudDetectionRequest = new FraudDetectionRequest();
+        fraudDetectionRequest.setAmt(incomingTransaction.getFloat("amt"));
+        fraudDetectionRequest.setCity_pop((float) c.getCity_pop());
+        fraudDetectionRequest.setMerchant(m.getMerchantCode().intValue());
+        fraudDetectionRequest.setCc_num(c.getCode().intValue());
+        fraudDetectionRequest.setAge(c.getAge());
+        fraudDetectionRequest.setDistance_from_home(distanceKms.floatValue());
+        return fraudDetectionRequest;
+
+    }
+
+
 }
