@@ -63,7 +63,7 @@ At a high-level, the pipeline executes the following steps:
 * Calculate real-time features such as "distance from home" (distance from transaction Geolocation and the Customer's billing address).
 * Perform Feature engineering required to convert Customer and Merchant features into numeric values required by the Fraud Detection model
 * Run the Fraud Detection model
-* Focus on "Potential Fraud" cases (e.g. filter those withfraud probability higher than a given Threshold e.g > 0.5)
+* Focus on "Potential Fraud" cases (e.g. filter those with fraud probability higher than 0.5)
 * Log these potential fraud cases for further analysis
 
 
