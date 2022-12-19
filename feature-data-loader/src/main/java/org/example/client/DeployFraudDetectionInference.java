@@ -25,7 +25,7 @@ import static org.example.util.Util.isOnlineFeatureDataLoaded;
 
 public class DeployFraudDetectionInference {
     private static final String KAFKA_TOPIC = "Transactions";
-    private static final String SCORING_JOB_NAME = "ScoringJobPipeline";
+    private static final String SCORING_JOB_NAME = "Fraud Detection Inference Pipeline";
 
     public static void main(String[] args) throws InterruptedException {
         //arg[0] must be Hazelcast server:port (e.g. "192.168.0.135:5701")
@@ -170,7 +170,8 @@ public class DeployFraudDetectionInference {
                     FraudDetectionResponse prediction =  service.getFraudProbability(tup.f2());
                     return Tuple4.tuple4(tup.f0(),tup.f1(),tup.f2(),prediction);
                 })
-                .filter (tup -> tup.f3().getFraudProbability() > 0.3)
+                //.filter (tup -> tup.f3().getFraudProbability() > 0.3)
+                .map (tup -> tup.f3())
                 .writeTo(Sinks.logger());
 
         Util.submitJob(p, client, SCORING_JOB_NAME);

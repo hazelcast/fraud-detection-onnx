@@ -60,9 +60,9 @@ public class Main {
         Pipeline pipeline = Pipeline.create();
         pipeline.readFrom(source)
                 .map(transaction -> {
-                    String key = transaction.getTrans_num();
-                    ObjectMapper mapper = new ObjectMapper();
+                    String key = transaction.getCc_num().toString();
                     //Converting the Transaction to JSONString
+                    ObjectMapper mapper = new ObjectMapper();
                     String jsonString = mapper.writeValueAsString(transaction);
                     return new AbstractMap.SimpleEntry<>(key, jsonString);
                 } )
