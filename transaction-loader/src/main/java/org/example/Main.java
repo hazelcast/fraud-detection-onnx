@@ -22,8 +22,8 @@ public class Main {
     private static HazelcastInstance startHazelcastInstances() {
 
         Config cfg = new Config();
+        cfg.getNetworkConfig().setPort( 25701 ).setPortAutoIncrement(false);
         cfg.getJetConfig().setEnabled(true);
-
         HazelcastInstance hazelcastInstance =  Hazelcast.newHazelcastInstance(cfg);
         hazelcastInstance.getJet().getConfig().setResourceUploadEnabled(true);
         return hazelcastInstance;
@@ -68,7 +68,6 @@ public class Main {
                     return new AbstractMap.SimpleEntry<>(key, jsonString);
                 } )
                 .writeTo(KafkaSinks.kafka(getKafkaBrokerProperties(bootstrapServers), "Transactions"));
-                //.writeTo(Sinks.logger());
         //Execute the Job
         submitJob(pipeline,hazelcastInstance,jobName);
     }

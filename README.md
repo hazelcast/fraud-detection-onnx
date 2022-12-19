@@ -23,21 +23,19 @@ To-Do
 docker-compose up -d
 ```
 # Create a "Transactions" Kafka Topic
-The "Transactions" topic will have 271 partitions (to match Hazelcast's 271 partitions)
+The "Transactions" topic will have 271 partitions
 ```
 docker exec -it broker sh /usr/bin/kafka-topics --create --bootstrap-server localhost:9092 --topic Transactions --replication-factor 1 --partitions 271
 ```
 
 # Load 2.8M Transactions to a Kafka Topic
-Hazelcast can be deployed in two modes: Client/Server and embedded within an application.\
-This transaction loader is a good example of running Hazelcast in embedded mode
+
 ```
 cd transaction-loader 
-hz-cli submit -v -t 192.168.0.135:5702 -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar $(pwd) transaction_data_stream.csv localhost:9092
+hz-cli submit -v -t 192.168.0.135:25701 -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar $(pwd) transaction_data_stream.csv localhost:9092
 cd ..
 ```
-This transaction loader is a good example of running Hazelcast in embedded mode\
-Check the source code for details\
+This transaction loader is a good example of running Hazelcast in embedded model. Check the source code for details\
 
 After a few seconds, you should see a "Transaction Loader Job" success message in the output
 

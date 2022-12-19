@@ -1,6 +1,4 @@
 version: "3.9"
-
-
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -44,6 +42,7 @@ services:
       - ./feature-data-loader/hazelcast.yml:/opt/hazelcast/hazelcast.yml
     environment:
       - HAZELCAST_CONFIG=/opt/hazelcast/hazelcast.yml
+    
 
   hazelcast-mc:
     image: hazelcast/management-center:5.2.1
@@ -59,5 +58,6 @@ services:
       - MC_METRICS_PERSISTENCE_ENABLED=false
       - MC_PROMETHEUS_EXPORTER_ENABLED=true
       - MC_PROMETHEUS_EXPORTER_PORT:9000
+
     
 #Source https://github.com/confluentinc/cp-all-in-one/blob/7.3.0-post/cp-all-in-one/docker-compose.yml 

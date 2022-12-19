@@ -191,12 +191,6 @@ hazelcast:
     client-block-unmapped-actions: true
 
   map:
-    transactionScoringRequestMap:
-      in-memory-format: BINARY
-      event-journal:
-        enabled: true
-        capacity: 10000
-        time-to-live-seconds: 20
     merchantMap:
       in-memory-format: OBJECT 
     customerMap:
