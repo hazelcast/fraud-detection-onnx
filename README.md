@@ -105,8 +105,14 @@ You can see how the original transaction has been processed by the Fraud Detecti
 
 
 # Monitoring in Hazelcast
+You can start Hazelcast Management Center by navigating to localhost:8080\
 
-WIP
+Create a connection to <YOUR IP ADDRESS>:5701
+
+Find details of the Fraud Detection Inference Pipeline\
+![Management Center showing Fraud Detection Inference Job](./images/mc.png)
+
+
 
 # Monitoring in Grafana
 
