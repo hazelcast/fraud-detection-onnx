@@ -77,10 +77,13 @@ If you check the logs for the hazelcast-onnx container, you should see some of t
 ```
 docker logs hazelcast-onnx
 ```
-You should see "potential fraud cases"\\
+You should see "potential fraud cases" as shown in the image below\
+
+You can see how the original transaction has been processed by the Fraud Detection pipeline
+
 ![Potential Fraud Cases image](./images/potential-fraud-case.png)
 
-Notice the output generated contains information generated at different stages in the Fraud detection pipeline
+
 
 # QUESTION TIME:question:
 * Can you suggest reasons the model might be flagging the above transaction as potentially fraudulent?
