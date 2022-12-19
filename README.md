@@ -83,7 +83,7 @@ You should see "potential fraud cases" similar to this\
 
 Notice the output generated contains information generated at multiple steps in the Fraud detection  pipeline!
 
-# QUESTION TIME!! :question:
+# QUESTION TIME:question:
 * Can you suggest reasons the model might be flagging the above transaction as potentially fraudulent?
 * Did you notice the model inference time? 
     * Is that good? (0.4ms) 
