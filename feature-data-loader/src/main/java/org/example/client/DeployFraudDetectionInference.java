@@ -64,7 +64,7 @@ public class DeployFraudDetectionInference {
                         cr -> new AbstractMap.SimpleEntry<>(cr.key().toString(),new JSONObject(cr.value().toString())),
                         KAFKA_TOPIC))
                 .withNativeTimestamps(0)
-                .setLocalParallelism(5)
+                .setLocalParallelism(10)
                 //retrieve Merchant Features
                 .mapUsingIMap(Util.MERCHANT_MAP,
                         tup -> tup.getValue().getString("merchant"),
@@ -170,8 +170,8 @@ public class DeployFraudDetectionInference {
                     FraudDetectionResponse prediction =  service.getFraudProbability(tup.f2());
                     return Tuple4.tuple4(tup.f0(),tup.f1(),tup.f2(),prediction);
                 })
-                //.filter (tup -> tup.f3().getFraudProbability() > 0.3)
-                .map (tup -> tup.f3())
+                .filter (tup -> tup.f3().getFraudProbability() > 0.5)
+                //.map (tup -> tup.f3())
                 .writeTo(Sinks.logger());
 
         Util.submitJob(p, client, SCORING_JOB_NAME);

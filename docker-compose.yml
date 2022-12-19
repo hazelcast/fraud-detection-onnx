@@ -49,7 +49,15 @@ services:
     image: hazelcast/management-center:5.2.1
     hostname: hazelcast-mc
     container_name: hazelcast-mc
+    depends_on:
+      - hazelcast-onnx
     ports:
       - "8080:8080"
+    environment:
+      - MC_DEFAULT_CLUSTER=dev
+      - MC_DEFAULT_CLUSTER_MEMBERS=hazelcast-onnx
+      - MC_METRICS_PERSISTENCE_ENABLED=false
+      - MC_PROMETHEUS_EXPORTER_ENABLED=true
+      - MC_PROMETHEUS_EXPORTER_PORT:9000
     
 #Source https://github.com/confluentinc/cp-all-in-one/blob/7.3.0-post/cp-all-in-one/docker-compose.yml 

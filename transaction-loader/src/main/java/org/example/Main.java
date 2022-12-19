@@ -23,6 +23,7 @@ public class Main {
 
         Config cfg = new Config();
         cfg.getJetConfig().setEnabled(true);
+
         HazelcastInstance hazelcastInstance =  Hazelcast.newHazelcastInstance(cfg);
         hazelcastInstance.getJet().getConfig().setResourceUploadEnabled(true);
         return hazelcastInstance;
