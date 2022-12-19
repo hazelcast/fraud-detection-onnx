@@ -90,11 +90,11 @@ Notice the output generated contains information generated at multiple steps in 
     * Suggest ways to improve it!
 
 
-# Basic Fraud Detection System Monitoring in Hazelcast
+# Monitoring in Hazelcast
 
 WIP
 
-# Basic Fraud Detection Monitoring in Grafana
+# Monitoring in Grafana
 
 WIP
 
