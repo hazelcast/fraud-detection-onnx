@@ -89,7 +89,7 @@ For convenience, store the `hazelcast-onnx` address:port as an environment var
 export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701
 ```
 
-# Load some transactions into your Kafka Cluster
+# Load some transactions into your Kafka
 
 Next, You will Hazelcast's CLI, `hz-cli`, to submit a data loading job that will upload 100k "Transactions" into Kafka. The transactions are preloaded as CSV files in your `hazelcast-onnx` container.
 
@@ -107,37 +107,30 @@ After a few seconds, you should see a "Transaction Loader Job" success message i
 ![Transaction loader success message ](./images/transaction-loader-success.png)
 
 
-# Load Customer and Merchant Feature Data into Hazelcast
-You will use hz-cli to submit a series of feature data loading jobs and the inference pipeline into Hazelcast.\
+# Load Feature data and Transaction Inference Jobs into Hazelcast
 
-These jobs will simply load the Merchant & customer data from JSON and CSV files into [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) 
 
-Once the Customer and Merchant Feature data is loaded, the fraud inference pipeline will also be deployed. This will start running the incoming transactions from Kafka through the Fraud Detection model 
+These Feature data jobs will simply load the Customer & Feature data from JSON and CSV files into [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) 
+
+Once these jobs are executed, the fraud inference pipeline will also be deployed. This will start processing incoming transactions from Kafka
 
 First, go into the feature-data-loader folder
 ``
 cd ../feature-data-loader
 ```
-You will need a command that looks like this 
-```
-hz-cli submit -v -t [hazelcast:port] -c org.example.client.LoadOnlineFeatures target/feature-data-loader-1.0-SNAPSHOT.jar [hazelcast:port]
-```
 
-For example, assuming
-* Hazelcast IP: port = ecsde-LoadB-1H1HHMC3E8E6F-7b7a701d547d1f06.elb.us-east-2.amazonaws.com:5701 
-* Kafka cluster IP : port = pkc-ymrq7.us-east-2.aws.confluent.cloud:9092
-* Onnx model = lightgbm_fraud_detection_onnx (preloaded into the container!)
-
-Your command would look like this:
+and Run
 ```
-hz-cli submit -v -t ecsde-LoadB-1H1HHMC3E8E6F-7b7a701d547d1f06.elb.us-east-2.amazonaws.com:5701 -c org.example.client.DeployFraudDetectionInference target/feature-data-loader-1.0-SNAPSHOT.jar ecsde-LoadB-1H1HHMC3E8E6F-7b7a701d547d1f06.elb.us-east-2.amazonaws.com:5701 pkc-ymrq7.us-east-2.aws.confluent.cloud:9092 lightgbm_fraud_detection_onnx
+hz-cli submit -v -t $HZ_ONNX \
+     -c org.example.client.DeployFraudDetectionInference \
+    target/feature-data-loader-1.0-SNAPSHOT.jar lightgbm_fraud_detection_onnx
 ``
 
 After a few seconds, you should see an output similar to
 
 ![Feature Loader Success Message](./images/feature-loader-msg.png)
 
-# The Fraud Detection Inference Pipeline 
+# About The Fraud Detection Inference Pipeline ...
 
 At a high-level, the Fraud Detection inference pipeline executes the following steps:
 * Take a transaction from Kafka (with minimal information such as Credit Card Number, Merchant, Amount, Transaction date and Geolocation )
@@ -149,18 +142,16 @@ At a high-level, the Fraud Detection inference pipeline executes the following s
 Finally, and for the purposes of this demo, the pipeline perform two actions:
 
 * All potentially fraudulent transactions, (e.g. filter those with fraud probability higher than 0.5), are logged to the console
-* All predictions and incoming transactions are saved in memory (as IMaps) 24 hours for further analysis
+* <TO-DO> All predictions and incoming transactions are saved in memory (as IMaps) 24 hours for further analysis
 
 ## Production Ideas
-In a real-world scenario, the end of the inference pipeline could become the starting point to other pipelines. For example, you could create pipelines to:
+In a real-world scenario, the end of the inference pipeline is typically the start of other pipelines. For example, you could create pipelines to:
 
 * Trigger automatic customer validation request for potentially fraudulent transactions
-* Alert data scientist about model/data drift (e.g. determine if model re-training is needed)
-* Send automatic merchant notifications for "fraudulent transactions"
-* Update Customer Features such as "last known coordinates" or "number/value of transactions attempted in the last X minutes"
+* Trigger automatic alerts for ML OPs teeam warning about model/data drift (e.g. determine if model re-training is needed)
+* Update Customer "online" features such as "last known coordinates", "last transaction amount". "amount spent in the last 24 hours", number/value of transactions attempted in the last X minutes/days"
 
-
-# Check Logs to see Potentially Fraudulent transasctions flagged by the model
+# Check Logs to see Potentially Fraudulent transactions flagged by the model
 you should see some of these potential fraud cases by inspecting the logs. \
 
 ```
