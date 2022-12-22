@@ -1,3 +1,11 @@
+# Before you start
+Make sure you have:
+*  `aws cli` configured to work with your AWS account.
+* An AWS Cloud user with [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
+* Docker Compose installed on your system
+* Hazelcast 5.2.1 installed on your system
+
+
 # Fraud Detection With Hazelcast and ONNX
 
 In this demo, you will:
@@ -53,9 +61,6 @@ We've created a docker image preloaded with:
 This image can be deployed to your Cloud provider of choice or run locally (preferably on an AMD64 machine). The image will run on ARM devices, like Apple M1, via emulation. However, the performance and stability may be impacted when running under emulation
 
 ## Deploy Hazelcast-Onnx image to AWS ECS with Docker Compose
-* Make sure you have `aws cli` configured to work with your AWS account.
-* Make sure your AWS user has [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
-* You have Docker Compose installed on your system
 
 Create a docker "Context" to deploy a `docker compose` file to AWS ECS
 ```
