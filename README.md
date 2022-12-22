@@ -4,7 +4,7 @@ Make sure you have:
 * An AWS Cloud user with [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
 * Docker Compose 
 * Hazelcast 5.2.1 installed on your system
-* Install [Git LFS](https://git-lfs.com/)
+* [Git LFS](https://git-lfs.com/) on your system
 
 
 # Fraud Detection With Hazelcast and ONNX
