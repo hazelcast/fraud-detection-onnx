@@ -152,7 +152,7 @@ Finally, and for the purposes of this demo, the pipeline perform two actions:
 In a real-world scenario, the end of the inference pipeline is typically the start of other pipelines. For example, you could create pipelines to:
 
 * Trigger automatic customer validation request for potentially fraudulent transactions
-* Trigger automatic alerts to MLOPs team warning about model/data drift.
+* Trigger automatic alerts to ML-Ops team warning about model/data drift.
 * Update Customer "online features" such as `"last known coordinates"`, `"last transaction amount"`. `"amount spent in the last 24 hours"`, `"number/value of transactions attempted in the last X minutes/days"`
 
 # Check Logs for potential Fraudulent transactions
