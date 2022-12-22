@@ -41,31 +41,32 @@ export KAFKA_CLUSTER_SECRET=<YOUR_SECRET>
 
 Make sure you name your Topic "Transactions" :important:
 
-
+![Topic Screenshot](./images/kafka-topic.png)
 
 # Deploy a Hazelcast-Onnx Container AWS ECS
-At present, ONNX runtime is not supported in ARM/Java/Linux 
 
 We've created a docker image preloaded with:
 * Hazelcast 5.2.1 running on Ubuntu 22.04
 * ONNX runtime libraries in a supported platform/OS/Programming language (AMD64/Linux/Java)
 * Some sample Transaction data (in csv files)
 
+This image can be deployed to your Cloud provider of choice or run locally (preferably on an AMD64 machine). The image will run on ARM devices, like Apple M1, via emulation. However, the performance and stability may be impacted.
+
 ## Deploy Hazelcast-Onnx image to AWS ECS with Docker Compose
 * Make sure you have `aws cli` configured to work with your AWS account.
 * Make sure your AWS user has [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
 * You have Docker Compose installed on your system
 
-Create a docker "Context" to instruct docker compose to deploy to AWS ECS
+Create a docker "Context" to deploy a `docker compose` file to AWS ECS
 ```
 docker context create myecscontext
 docker context use myecscontext
 ```
-You can now deploy with
+You can now deploy the hazelcast-onnx container with
 ```
 docker compose up
 ```
-This will take 5-10 minutes.
+This will take 5-10 minutes to complete
 
 Once the process completes, you can check the hazelcast-onnx server name & port by running
 
