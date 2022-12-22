@@ -2,7 +2,7 @@
 Make sure you have:
 *  `aws cli` configured to work with your AWS account.
 * An AWS Cloud user with [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
-* Docker Compose installed on your system
+* Docker Compose 
 * Hazelcast 5.2.1 installed on your system
 
 
@@ -56,10 +56,12 @@ Make sure you name your Topic "Transactions". It is important!
 
 We've created a docker image preloaded with:
 * Hazelcast 5.2.1 running on Ubuntu 22.04
-* ONNX runtime libraries in a supported platform/OS/Programming language (AMD64/Linux/Java)
+* ONNX runtime libraries in a supported platform/OS/Programming language combination (e.g AMD64/Linux/Java)
 * Some sample Transaction data (in csv files) for testing purposes
 
-This image can be deployed to your Cloud provider of choice or run locally (preferably on an AMD64 machine). The image will run on ARM devices, like Apple M1, via emulation. However, the performance and stability may be impacted when running under emulation
+This image can be deployed to your cloud provider of choice or run locally (preferably on an AMD64 machine). \
+
+Note that theimage will run on ARM devices, like Apple M1, via emulation. However, the performance and stability may be impacted when running in emulation mode
 
 ## Deploy Hazelcast-Onnx image to AWS ECS with Docker Compose
 
@@ -87,30 +89,22 @@ For convenience, store the `hazelcast-onnx` address:port as an environment var
 export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701
 ```
 
-
 # Load some transactions into your Kafka Cluster
 
-You will use hz-cli, a Hazelcast CLI, to submit a data loading job that will upload one of the CSV files already present on the `hazelcast-onnx` container into the "Transactions" topic in your Kafka Cluster.
+Next, You will Hazelcast's CLI, `hz-cli`, to submit a data loading job that will upload 100k "Transactions" into Kafka. The transactions are preloaded as CSV files in your `hazelcast-onnx` container.
 
 ```
 cd transaction-loader 
 ```
 
-followed by a command like this
-
+Followed by 
 ```
-hz-cli submit -v -t [hazelcast-ip:port] -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar [pathtoyourtransactionsonServer] [transactions.csv filename] [kafka cluster:port] [hazelcast-ip:port]
-```
-For example, assuming
-* Kafka cluster IP : port = pkc-ymrq7.us-east-2.aws.confluent.cloud:9092
-* Hazelcast IP: port = ecsde-LoadB-1H1HHMC3E8E6F-7b7a701d547d1f06.elb.us-east-2.amazonaws.com:5701
-
-You could run the following command to load 100k transactions into Kafka
-```
-hz-cli submit -v -t ecsde-LoadB-1H1HHMC3E8E6F-7b7a701d547d1f06.elb.us-east-2.amazonaws.com:5701 -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar /opt/hazelcast/transaction 100k-transactions.csv pkc-ymrq7.us-east-2.aws.confluent.cloud:9092 ecsde-LoadB-1H1HHMC3E8E6F-7b7a701d547d1f06.elb.us-east-2.amazonaws.com:5701
+hz-cli submit -v -t $HZ_ONNX -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar 100k-transactions.csv
 ```
 
 After a few seconds, you should see a "Transaction Loader Job" success message in the output
+
+![Transaction loader success message ](./images/transaction-loader-success.png)
 
 
 # Load Customer and Merchant Feature Data into Hazelcast
