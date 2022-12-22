@@ -151,8 +151,8 @@ In a real-world scenario, the end of the inference pipeline is typically the sta
 * Trigger automatic alerts to MLOPs team warning about model/data drift.
 * Update Customer "online features" such as `"last known coordinates"`, `"last transaction amount"`. `"amount spent in the last 24 hours"`, `"number/value of transactions attempted in the last X minutes/days"`
 
-# Check Logs to see Potentially Fraudulent transactions flagged by the model
-you should see some of these potential fraud cases by inspecting the logs. \
+# Check Logs for potential Fraudulent transactions
+You should see some of these potential fraud cases identified by the model by inspecting the logs.
 
 ```
 docker compose logs hazelcast-onnx
@@ -165,18 +165,15 @@ You can see how the original transaction has been processed by the Fraud Detecti
 ![Potential Fraud Cases image](./images/potential-fraud-case.png)
 
 # Monitoring in Hazelcast
-You can start Hazelcast Management Center by navigating to localhost:8080
+You can start Hazelcast Management Center and check status of the multiple jobs
 
-Create a connection to `YOUR IP ADDRESS`:5701
+Create a connection to `Your hazelcast-onnx address`:5701
 
 Find details of the Fraud Detection Inference Pipeline\
 ![Management Center showing Fraud Detection Inference Job](./images/mc.png)
 
 In this case, please note that Total Out / Last Minute Out refer to potential fraud cases only!
 
-# Monitoring in Grafana
-
-WIP
 
 # Stop all Containers
 
@@ -195,11 +192,15 @@ docker context use default
 To-Do
 
 
-## (Optional) Building Your own Hazelcast-Onnx image
-If you wanted to create your own hazelcast-onnx image and preload it with your data and model, you can check the `Dockerfile` in the `hz-onnx-debian` folder for inspiration
+## (Optional) Building Your own hazelcast-onnx image
+If you wanted to create your own hazelcast-onnx image and preload it with your data and model, you can check the `Dockerfile` in the `hz-onnx-debian` folder for inspiration.
 
 ```
 docker-compose -f build-hz-onnx-image.yml build
 docker tag fraud-detection-onnx-hazelcast-onnx-debian <github-username>/<image-name>
 docker push <github-username>/<image-name> 
 ```
+
+# Monitoring in Grafana
+
+To-Do
