@@ -1,6 +1,6 @@
 # Before you start
 Make sure you have:
-*  `aws cli` configured to work with your AWS account.
+*  [`aws cli`](https://aws.amazon.com/cli/) configured to work with your AWS account.
 * An AWS Cloud user with [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
 * Docker Compose 
 * Hazelcast 5.2.1 installed on your system
@@ -181,7 +181,7 @@ In this case, please note that Total Out / Last Minute Out refer to potential fr
 docker compose down
 ```
 
-You may also want to return Docker to your "default" context
+You may also want to return Docker to your "default" context. This will prevent `docker compose` to deploy to AWS ECS
 
 ```
 docker context use default
