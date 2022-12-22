@@ -115,7 +115,7 @@ These Feature data jobs will simply load the Customer & Feature data from JSON a
 Once these jobs are executed, the fraud inference pipeline will also be deployed. This will start processing incoming transactions from Kafka
 
 First, go into the feature-data-loader folder
-``
+```
 cd ../feature-data-loader
 ```
 
@@ -124,7 +124,7 @@ and Run
 hz-cli submit -v -t $HZ_ONNX \
      -c org.example.client.DeployFraudDetectionInference \
     target/feature-data-loader-1.0-SNAPSHOT.jar lightgbm_fraud_detection_onnx
-``
+```
 
 After a few seconds, you should see an output similar to
 
@@ -148,8 +148,8 @@ Finally, and for the purposes of this demo, the pipeline perform two actions:
 In a real-world scenario, the end of the inference pipeline is typically the start of other pipelines. For example, you could create pipelines to:
 
 * Trigger automatic customer validation request for potentially fraudulent transactions
-* Trigger automatic alerts for ML OPs teeam warning about model/data drift (e.g. determine if model re-training is needed)
-* Update Customer "online" features such as "last known coordinates", "last transaction amount". "amount spent in the last 24 hours", number/value of transactions attempted in the last X minutes/days"
+* Trigger automatic alerts to MLOPs team warning about model/data drift.
+* Update Customer "online features" such as `"last known coordinates"`, `"last transaction amount"`. `"amount spent in the last 24 hours"`, `"number/value of transactions attempted in the last X minutes/days"`
 
 # Check Logs to see Potentially Fraudulent transactions flagged by the model
 you should see some of these potential fraud cases by inspecting the logs. \
