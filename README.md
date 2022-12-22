@@ -114,7 +114,7 @@ After a few seconds, you should see a "Transaction Loader Job" success message i
 # Load Feature data and Transaction Inference Jobs into Hazelcast
 
 
-These Feature data jobs will simply load the Customer & Feature data from JSON and CSV files into [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) 
+These Feature data jobs will simply load the Customer & Features from JSON and CSV files into [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) 
 
 Once these jobs are executed, the fraud inference pipeline will also be deployed. This will start processing incoming transactions from Kafka
 
