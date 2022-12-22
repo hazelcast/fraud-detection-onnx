@@ -64,9 +64,9 @@ hazelcast:
       # This technique doesn't attempt any auto-discovery, you directly list all
       # the candidate IPs to check.
       tcp-ip:
-        enabled: false
+        enabled: true
         member-list:
-          - 192.168.0.135:5701
+          - hazelcast-onnx:5701
 
       # Specifies whether the member use the AWS API to get a list of candidate
       # IPs to check. AWS "access-key" and "secret-key" are needed to access
@@ -191,12 +191,6 @@ hazelcast:
     client-block-unmapped-actions: true
 
   map:
-    transactionScoringRequestMap:
-      in-memory-format: BINARY
-      event-journal:
-        enabled: true
-        capacity: 10000
-        time-to-live-seconds: 20
     merchantMap:
       in-memory-format: OBJECT 
     customerMap:

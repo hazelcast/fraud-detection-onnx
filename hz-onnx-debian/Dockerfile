@@ -23,7 +23,8 @@ RUN apt update -y && apt install -y hazelcast=5.2.1
 RUN mkdir /opt/hazelcast/age-group /opt/hazelcast/category \ 
     /opt/hazelcast/cc_num /opt/hazelcast/gender /opt/hazelcast/job \
     /opt/hazelcast/merchant /opt/hazelcast/setting /opt/hazelcast/transaction_hour \
-    /opt/hazelcast/transaction_month /opt/hazelcast/transaction_weekday /opt/hazelcast/zip
+    /opt/hazelcast/transaction_month /opt/hazelcast/transaction_weekday \
+    /opt/hazelcast/zip /opt/hazelcast/transaction
 
 #Example Customer and Merchant Feature and pre-processing data
 COPY ./age-group/age_group_dict.json /opt/hazelcast/age-group/
@@ -46,6 +47,12 @@ COPY ./merchant_data.csv /opt/hazelcast/
 
 #Example Fraud Detection Onnx Model
 COPY ./lightgbm_fraud_detection_onnx /opt/hazelcast/
+
+#Example transaction data files
+COPY ./100k-transactions.csv /opt/hazelcast/transaction/
+COPY ./small_transactions.csv /opt/hazelcast/transaction/
+COPY ./1k-transactions.csv /opt/hazelcast/transaction/
+COPY ./10k-transactions.csv /opt/hazelcast/transaction/
 
 #Place Onnx Libraries in Hazelcast's Classpath
 COPY ./onnxruntime-1.13.1.jar /opt/hazelcast/onnxruntime-1.13.1.jar
