@@ -54,7 +54,7 @@ Make sure you name your Topic "Transactions". It is important!
 
 ![Topic Screenshot](./images/kafka-topic.png)
 
-# Deploy a Hazelcast-Onnx Container AWS ECS
+# Deploy a Hazelcast-Onnx Container to AWS ECS
 
 We've created a docker image preloaded with:
 * Hazelcast 5.2.1 running on Ubuntu 22.04
@@ -63,7 +63,7 @@ We've created a docker image preloaded with:
 
 This image can be deployed to your cloud provider of choice or run locally (preferably on an AMD64 machine). \
 
-Note that theimage will run on ARM devices, like Apple M1, via emulation. However, the performance and stability may be impacted when running in emulation mode
+Note that the image will run on ARM devices, like an Apple M1-powered device, via emulation. However, the performance and stability is noticeably impacted when running in emulation mode
 
 ## Deploy Hazelcast-Onnx image to AWS ECS with Docker Compose
 
@@ -72,6 +72,8 @@ Create a docker "Context" to deploy a `docker compose` file to AWS ECS
 docker context create myecscontext
 docker context use myecscontext
 ```
+Check the docker-compose.yml file.\ 
+
 You can now deploy the hazelcast-onnx container with
 ```
 docker compose up
