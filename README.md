@@ -61,7 +61,7 @@ We've created a docker image preloaded with:
 * ONNX runtime libraries in a supported platform/OS/Programming language combination (e.g AMD64/Linux/Java)
 * Some sample Transaction data (in csv files) for testing purposes
 
-This image can be deployed to your cloud provider of choice or run locally (preferably on an AMD64 machine). \
+This image can be deployed to your cloud provider of choice or run locally (preferably on an AMD64 machine).
 
 Note that the image will run on ARM devices, like an Apple M1-powered device, via emulation. However, the performance and stability is noticeably impacted when running in emulation mode
 
