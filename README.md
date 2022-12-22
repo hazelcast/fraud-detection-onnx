@@ -19,7 +19,12 @@ You will use Kafka as source of credit card transactions coming into your fraud 
 https://docs.confluent.io/cloud/current/get-started/index.html#quick-start-for-ccloud)
 
     * Capture your Kafka Cluster Endpoint information
-    [Endpoint screenshot](./images/kafka-endpoint.png)
+    ![Endpoint screenshot](./images/kafka-endpoint.png)
+
+Store your endpoint as an Environment variable
+```
+export KAFKA_ENDPOINT=pkc-ymrq7.us-east-2.aws.confluent.cloud:9092
+```
 
 * Once you create your Kakfa cluster, [create a 'Transactions' topic](https://docs.confluent.io/cloud/current/get-started/index.html#step-2-create-a-ak-topic) within it. \
 Make sure you name your Topic "Transactions"
