@@ -9,7 +9,7 @@ Make sure you have:
 # Fraud Detection With Hazelcast and ONNX
 
 In this demo, you will deploy a complete Fraud Detection Inference pipeline to Hazelcast. 
-The pipeline highlight 2 key capabilities in Hazelcast:
+The pipeline highlights two key capabilities in Hazelcast:
 * Fast (in-memory) data store to hold
     * Customer and Merchant feature data (e.g customer socio-economic attributes)
     * Feature engineering data dictionaries to tranform categorical features into numerical inputs for a Fraud Detection model
