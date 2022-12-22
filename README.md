@@ -12,13 +12,13 @@ In this demo, you will:
         * calculate real-time features (e.g. distance from home, time of day, day of week)
         * run the fraud detection model in Hazelcast 
 
-# Create a Kafka Cluster & Topic in With Confluent Cloud
+# Create a Kafka Cluster & Topic with Confluent Cloud
 You will use Kafka as source of credit card transactions coming into your fraud detection inference pipeline.
 
 * A simple way to get Kafka running is to [Create a Kafka Cluster in Confluent Cloud](
 https://docs.confluent.io/cloud/current/get-started/index.html#quick-start-for-ccloud)
 
-    * From `Cluster Settings-> Endpoints`, capture your Kafka Cluster `bootstrap server` URL
+    * Once your cluster is created, go to `Cluster Settings-> Endpoints` and capture your Kafka Cluster `bootstrap server` URL
 
     ![Endpoint screenshot](./images/kafka-endpoint.png)
 
@@ -39,7 +39,7 @@ export KAFKA_CLUSTER_SECRET=<YOUR_SECRET>
 
 * Now, you need to [create a 'Transactions' topic](https://docs.confluent.io/cloud/current/get-started/index.html#step-2-create-a-ak-topic) in your cluster
 
-Make sure you name your Topic "Transactions" :important:
+Make sure you name your Topic "Transactions". It is important!
 
 ![Topic Screenshot](./images/kafka-topic.png)
 
@@ -48,9 +48,9 @@ Make sure you name your Topic "Transactions" :important:
 We've created a docker image preloaded with:
 * Hazelcast 5.2.1 running on Ubuntu 22.04
 * ONNX runtime libraries in a supported platform/OS/Programming language (AMD64/Linux/Java)
-* Some sample Transaction data (in csv files)
+* Some sample Transaction data (in csv files) for testing purposes
 
-This image can be deployed to your Cloud provider of choice or run locally (preferably on an AMD64 machine). The image will run on ARM devices, like Apple M1, via emulation. However, the performance and stability may be impacted.
+This image can be deployed to your Cloud provider of choice or run locally (preferably on an AMD64 machine). The image will run on ARM devices, like Apple M1, via emulation. However, the performance and stability may be impacted when running under emulation
 
 ## Deploy Hazelcast-Onnx image to AWS ECS with Docker Compose
 * Make sure you have `aws cli` configured to work with your AWS account.
@@ -73,6 +73,14 @@ Once the process completes, you can check the hazelcast-onnx server name & port 
 ```
 docker compose ps
 ```
+
+![Docker compose output screenshot](./images/docker-compose-ecs-up.png)
+
+For convenience, store the `hazelcast-onnx` address:port as an environment var
+```
+export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701
+```
+
 
 # Load some transactions into your Kafka Cluster
 
