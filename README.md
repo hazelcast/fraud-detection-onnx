@@ -207,6 +207,6 @@ docker tag fraud-detection-onnx-hazelcast-onnx-debian <github-username>/<image-n
 docker push <github-username>/<image-name> 
 ```
 
-# Monitoring in Grafana
+## (Optional) Monitoring in Grafana
 
 To-Do
