@@ -53,8 +53,6 @@
                 <configuration>
                     <mainClass>org.example.client.DeployFraudDetectionInference</mainClass>
                     <arguments>
-                        <argument>192.168.0.135:5701</argument>
-                        <argument>broker:29092</argument>
                         <argument>lightgbm_fraud_detection_onnx</argument>
                     </arguments>
                 </configuration>

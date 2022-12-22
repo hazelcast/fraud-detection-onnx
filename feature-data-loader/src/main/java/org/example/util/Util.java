@@ -16,6 +16,7 @@ import org.example.datamodel.Customer;
 import org.example.datamodel.Merchant;
 import org.example.fraudmodel.*;
 
+import java.io.IOException;
 import java.util.Properties;
 
 public class Util {
@@ -31,7 +32,7 @@ public class Util {
     public static final String CUSTOMER_MAP = "customerMap";
     public static final String TRANSACTION_HOUR_MAP = "transactionHours";
     public static final String TRANSACTION_MONTH_MAP = "transactionMonths";
-    public static final String TRANSACTION_WEEKDAY_MAP = "transactionWeedDays";
+    public static final String TRANSACTION_WEEKDAY_MAP = "transactionWeekDays";
     public static final String MODEL_NAME = BASE_DIR + "lightgbm_fraud_detection_onnx";
     public static final String AGE_GROUP_DICTIONARY_FOLDER = BASE_DIR + "age-group";
     public static final String CATEGORY_DICTIONARY_FOLDER =  BASE_DIR + "category";
@@ -49,11 +50,12 @@ public class Util {
     public static final String MERCHANT_FILENAME = "merchant_data.csv";
     public static final String MERCHANT_DATA_FOLDER = BASE_DIR ;
 
-    public static HazelcastInstance getHazelClient(String hazelcastClusterMemberAddresses) {
+    public static HazelcastInstance getHazelClient(String hazelcastClusterMemberAddresses)  {
+
+
         ClientConfig clientConfig = new ClientConfig();
         clientConfig.setClusterName("dev");
         clientConfig.getNetworkConfig().addAddress(hazelcastClusterMemberAddresses);
-
 
         //Start the client
         HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
@@ -113,7 +115,7 @@ public class Util {
                 System.out.println(e);
             }
         }
-        System.out.println("*************** Loading " + jobName + " to Hazelcast******************\n");
+        System.out.println("*************** Loading " + jobName + " to Hazelcast ******************\n");
         client.getJet().newJob(p, jobCfg);
     }
 
@@ -124,18 +126,26 @@ public class Util {
         }
         return false;
     }
-    public static Properties kafkaConsumerProps(String kafkaBroker) {
-        //kafkaBroker should be localhost:29092
+    public static Properties kafkaConsumerProps(String kafkaBroker,String kafkaKey, String kafkaSecret) {
+
         Properties props = new Properties();
         props.setProperty("bootstrap.servers", kafkaBroker);
         props.setProperty("key.deserializer", StringDeserializer.class.getCanonicalName());
         props.setProperty("value.deserializer", StringDeserializer.class.getCanonicalName());
         props.setProperty("auto.offset.reset", "earliest");
+
+        //Cloud
+        props.setProperty("security.protocol","SASL_SSL");
+        props.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username='" + kafkaKey  + "' password='" + kafkaSecret  +"';");
+        props.setProperty("sasl.mechanism","PLAIN");
+        props.setProperty("session.timeout.ms","45000");
+        props.setProperty("client.dns.lookup","use_all_dns_ips");
+        props.setProperty("acks","all");
         return props;
     }
 
     public static Double calculateDistanceKms(double lat1, double long1, double lat2, double long2) {
-        return org.apache.lucene.util.SloppyMath.haversinMeters(lat1, long1, lat2, long2);
+        return org.apache.lucene.util.SloppyMath.haversinMeters(lat1, long1, lat2, long2) / 1_000;
     }
 
     public static FraudDetectionRequest createFrom(JSONObject incomingTransaction, Customer c, Merchant m, Double distanceKms) {
@@ -147,8 +157,6 @@ public class Util {
         fraudDetectionRequest.setAge(c.getAge());
         fraudDetectionRequest.setDistance_from_home(distanceKms.floatValue());
         return fraudDetectionRequest;
-
     }
-
 
 }

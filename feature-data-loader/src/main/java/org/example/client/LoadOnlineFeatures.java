@@ -15,7 +15,31 @@ import java.util.Map;
 import static org.example.util.Util.*;
 
 public class LoadOnlineFeatures {
-    public static void main(String[] args) throws InterruptedException {
+
+    public static void loadOnlineFeatures(HazelcastInstance client) throws InterruptedException {
+
+        if (client!=null) {
+            if (! isOnlineFeatureDataLoaded(client)) {
+                //Load feature dictionaries into Hazelcast Maps
+                loadPreProcessingDictionary(client,AGE_GROUP_DICTIONARY_FOLDER,AGE_GROUP_MAP);
+                loadPreProcessingDictionary(client,CATEGORY_DICTIONARY_FOLDER,CATEGORY_MAP);
+                loadPreProcessingDictionary(client,GENDER_DICTIONARY_FOLDER,GENDER_MAP);
+                loadPreProcessingDictionary(client,JOB_DICTIONARY_FOLDER,JOB_MAP);
+                loadPreProcessingDictionary(client,SETTING_DICTIONARY_FOLDER,SETTING_MAP);
+                loadPreProcessingDictionary(client,TRANSACTION_HOUR_DICTIONARY_FOLDER,TRANSACTION_HOUR_MAP);
+                loadPreProcessingDictionary(client,TRANSACTION_MONTH_DICTIONARY_FOLDER,TRANSACTION_MONTH_MAP);
+                loadPreProcessingDictionary(client,TRANSACTION_WEEKDAY_DICTIONARY_FOLDER,TRANSACTION_WEEKDAY_MAP);
+                loadPreProcessingDictionary(client,ZIP_DICTIONARY_FOLDER,ZIP_MAP);
+                // Load Customer and Merchant Features into Hazelcast Maps
+                loadCustomerFeatureData(client);
+                loadMerchantFeatureData(client);
+                //Thread.sleep(2000);
+            }
+        }
+        System.out.println("\n******************* All Feature Loading Jobs submitted to Hazelcast! *******************\n");
+
+    }
+    /*public static void main(String[] args) throws InterruptedException {
         //arg[0] must be Hazelcast server:port (e.g. "192.168.0.135:5701")
         HazelcastInstance client = Util.getHazelClient(args[0]);
         if (!args[0].isBlank()) {
@@ -37,9 +61,9 @@ public class LoadOnlineFeatures {
             }
         }
 
-        client.shutdown();
         System.out.println("\n******************* All Feature Loading Jobs submitted to Hazelcast! *******************\n");
-    }
+        client.shutdown();
+    }*/
     private static void loadPreProcessingDictionary (HazelcastInstance client, String folder, String mapName) {
         // Simple pipeline to load a dictionary-like JSON file stored in <folder> into a Hazelcast IMap <mapName>
         Pipeline pipeline = Pipeline.create();

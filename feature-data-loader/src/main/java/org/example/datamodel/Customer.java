@@ -69,7 +69,9 @@ public class Customer  {
         String street = "Street = " + this.street + "\n";
         String city = "City = " + this.city + "\n";
         String code = "Customer Code = " + this.code + "\n";
-        return (header + ccnum + first + last + gender + street + city + code);
+        String lat = "Customer Home Lat = " + this.latitude + "\n";
+        String longitude = "Customer Home Long = " + this.longitude + "\n";
+        return (header + ccnum + first + last + gender + street + city + code + lat + longitude);
     }
 
     public String getSsn() {

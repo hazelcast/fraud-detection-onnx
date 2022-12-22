@@ -20,7 +20,10 @@ import org.example.util.Util;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
+import java.util.Map;
 
+import static org.example.client.LoadOnlineFeatures.loadOnlineFeatures;
+import static org.example.util.Util.BASE_DIR;
 import static org.example.util.Util.isOnlineFeatureDataLoaded;
 
 public class DeployFraudDetectionInference {
@@ -28,43 +31,45 @@ public class DeployFraudDetectionInference {
     private static final String SCORING_JOB_NAME = "Fraud Detection Inference Pipeline";
 
     public static void main(String[] args) throws InterruptedException {
-        //arg[0] must be Hazelcast server:port (e.g. "192.168.0.135:5701")
-        HazelcastInstance client = Util.getHazelClient(args[0]);
-        System.out.println("Connecting to Hazelcast at " + args[0]);
-        //arg[1] must be kafka broker:port (e.g "localhost:9092")
-        String kafkaBroker = args[1];
-        System.out.println("Pulling transactions from Kafka broker " + args[1]);
-        //arg[2] must be onnxFilename (e.g "fraudmodel-1.0.onnx")
-        String onnxModelFileName = args[2];
-        System.out.println("Name of the Onnx Model " + args[2]);
 
-        if (isOnlineFeatureDataLoaded(client)) {
-            submitFraudDetectionInferencePipeline(client,kafkaBroker,onnxModelFileName);
-            Thread.sleep(2000);
+        Map<String, String> env = System.getenv();
+        //arg[0] must be onnxFilename (e.g "fraudmodel-1.0.onnx")
+        String onnxModelFileName = args[0];
+        String HZ_ONNX = env.get("HZ_ONNX");
+        String KAFKA_CLUSTER_KEY = env.get("KAFKA_CLUSTER_KEY");
+        String KAFKA_CLUSTER_SECRET = env.get("KAFKA_CLUSTER_SECRET");
+        String KAFKA_CLUSTER_ENDPOINT = env.get("KAFKA_ENDPOINT");
+        // get a client connection to Hazelcast-onnx
+        HazelcastInstance client = Util.getHazelClient(HZ_ONNX);
+        System.out.println("Connecting to Hazelcast at " + HZ_ONNX);
+        System.out.println("Pulling transactions from Kafka  " + KAFKA_CLUSTER_ENDPOINT);
+        System.out.println("Name of the Onnx Model " + onnxModelFileName);
 
-
-        } else {
-            System.out.println("Incorrect input parameters. Expected hazelcastIP:port kafkaIP:port");
+        if (!isOnlineFeatureDataLoaded(client)) {
+            loadOnlineFeatures(client);
         }
-        client.shutdown();
 
+        submitFraudDetectionInferencePipeline(client,KAFKA_CLUSTER_ENDPOINT,
+                onnxModelFileName,KAFKA_CLUSTER_KEY,KAFKA_CLUSTER_SECRET);
+        Thread.sleep(2000);
+        client.shutdown();
     }
 
-    private static void submitFraudDetectionInferencePipeline(HazelcastInstance client,String kafkaBroker,String onnxModelFileName) throws InterruptedException {
+    private static void submitFraudDetectionInferencePipeline(HazelcastInstance client,String kafkaBroker,String onnxModelFileName,String kafkaKey, String kafkaSecret) throws InterruptedException {
 
         // Set up ONNX Fraud Detection Model as a Service in the transaction processing pipeline
         ServiceFactory<?, LightGBMFraudDetectorService> fraudCheckingService = ServiceFactories
-                .sharedService(ctx ->new LightGBMFraudDetectorService(onnxModelFileName))
+                .sharedService(ctx ->new LightGBMFraudDetectorService(BASE_DIR + onnxModelFileName))
                 .toNonCooperative();
 
         Pipeline p = Pipeline.create();
 
         p.readFrom(KafkaSources.kafka(
-                        Util.kafkaConsumerProps(kafkaBroker),
+                        Util.kafkaConsumerProps(kafkaBroker, kafkaKey,kafkaSecret),
                         cr -> new AbstractMap.SimpleEntry<>(cr.key().toString(),new JSONObject(cr.value().toString())),
                         KAFKA_TOPIC))
                 .withNativeTimestamps(0)
-                .setLocalParallelism(10)
+                .setLocalParallelism(8)
                 //retrieve Merchant Features
                 .mapUsingIMap(Util.MERCHANT_MAP,
                         tup -> tup.getValue().getString("merchant"),
@@ -175,7 +180,7 @@ public class DeployFraudDetectionInference {
                 .writeTo(Sinks.logger());
 
         Util.submitJob(p, client, SCORING_JOB_NAME);
-        Thread.sleep(2000);
+
 
     }
 
