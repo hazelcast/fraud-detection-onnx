@@ -171,7 +171,7 @@ You can see how the original transaction has been processed by the Fraud Detecti
 # Monitoring in Hazelcast
 You can start Hazelcast Management Center and check status of the multiple jobs
 
-Create a connection to `Your hazelcast-onnx address`:5701
+Create a connection to you `$HZ_ONNX` endpoint
 
 Find details of the Fraud Detection Inference Pipeline\
 ![Management Center showing Fraud Detection Inference Job](./images/mc.png)
