@@ -123,7 +123,7 @@ First, go into the feature-data-loader folder
 cd ../feature-data-loader
 ```
 
-and Run
+and run
 ```
 hz-cli submit -v -t $HZ_ONNX \
      -c org.example.client.DeployFraudDetectionInference \
