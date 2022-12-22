@@ -13,12 +13,16 @@ In this demo, you will:
         * run the fraud detection model in Hazelcast 
 
 # Create a Kafka Cluster & Topic in With Confluent Cloud
-You will use Kafka as source of credit card transactions coming into your fraud detection inference pipeline.\
-* For a simple way to get Kafka running is to [create a Kafka Cluster in Confluent Cloud](
+You will use Kafka as source of credit card transactions coming into your fraud detection inference pipeline.
+
+* A simple way to get Kafka running is to [Create a Kafka Cluster in Confluent Cloud](
 https://docs.confluent.io/cloud/current/get-started/index.html#quick-start-for-ccloud)
 
-* Once you create your Kakfa cluster, [create a 'Transactions' topic](https://docs.confluent.io/cloud/current/get-started/index.html#step-2-create-a-ak-topic). \
-Make sure to name it "Transactions".
+    * Capture your Kafka Cluster Endpoint information
+    [Endpoint screenshot](./images/kafka-endpoint.png)
+
+* Once you create your Kakfa cluster, [create a 'Transactions' topic](https://docs.confluent.io/cloud/current/get-started/index.html#step-2-create-a-ak-topic) within it. \
+Make sure you name your Topic "Transactions"
 
 * Obtain API Key & Secret to connect to your cluster. You will need these parameters to connect Hazelcast to Kafka later on
 
