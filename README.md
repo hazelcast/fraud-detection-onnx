@@ -93,7 +93,7 @@ For convenience, store the `hazelcast-onnx` address:port as an environment var
 export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701
 ```
 
-# Load some transactions into your Kafka
+# Load some transactions into Kafka
 
 Next, You will Hazelcast's CLI, `hz-cli`, to submit a data loading job that will upload 100k "Transactions" into Kafka. The transactions are preloaded as CSV files in your `hazelcast-onnx` container.
 
