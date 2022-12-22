@@ -18,7 +18,8 @@ You will use Kafka as source of credit card transactions coming into your fraud 
 * A simple way to get Kafka running is to [Create a Kafka Cluster in Confluent Cloud](
 https://docs.confluent.io/cloud/current/get-started/index.html#quick-start-for-ccloud)
 
-    * From Cluster `Settings-> Endpoints`, capture your Kafka Cluster `bootstrap server` URL
+    * From `Cluster Settings-> Endpoints`, capture your Kafka Cluster `bootstrap server` URL
+
     ![Endpoint screenshot](./images/kafka-endpoint.png)
 
 Store it as an environment variable
@@ -26,10 +27,19 @@ Store it as an environment variable
 export KAFKA_ENDPOINT=pkc-ymrq7.us-east-2.aws.confluent.cloud:9092
 ```
 
-* Once you create your Kakfa cluster, [create a 'Transactions' topic](https://docs.confluent.io/cloud/current/get-started/index.html#step-2-create-a-ak-topic) within it. \
-Make sure you name your Topic "Transactions"
+* From `API Keys`-> click `Add Key` and make sure you capture your new Key and Secret
 
-* Obtain API Key & Secret to connect to your cluster. You will need these parameters to connect Hazelcast to Kafka later on
+    ![Key & Secret Screenshot](./images/kafka-key-secret.png)
+
+Store the Key and Secret as environment variables
+```
+export KAFKA_CLUSTER_KEY=5BCBBMROQCA4L4SK
+export KAFKA_CLUSTER_SECRET=<YOUR_SECRET>
+```
+
+* Now, you need to [create a 'Transactions' topic](https://docs.confluent.io/cloud/current/get-started/index.html#step-2-create-a-ak-topic) in your cluster
+
+Make sure you name your Topic "Transactions" :important:
 
 
 
