@@ -185,7 +185,9 @@ In this case, please note that Total Out / Last Minute Out refer to potential fr
 docker compose down
 ```
 
-You may also want to return Docker to your "default" context. This will prevent `docker compose` to deploy to AWS ECS
+You may also want to return Docker to your "default" context. 
+
+This will prevent future `docker compose` inadvertedly deploying to AWS ECS!
 
 ```
 docker context use default
