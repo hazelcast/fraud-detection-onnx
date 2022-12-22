@@ -199,7 +199,7 @@ To-Do
 
 
 ## (Optional) Building Your own hazelcast-onnx image
-If you wanted to create your own hazelcast-onnx image and preload it with your data and model, you can check the `Dockerfile` in the `hz-onnx-debian` folder for inspiration.
+If you wanted to create your own hazelcast-onnx image and preload it with your data and model, you can check the [`Dockerfile`](./hz-onnx-debian/Dockerfile) in `hz-onnx-debian` for inspiration.
 
 ```
 docker-compose -f build-hz-onnx-image.yml build
