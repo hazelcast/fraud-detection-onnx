@@ -2,15 +2,15 @@
 
 In this demo, you will:
 * Deploy a complete Fraud Detection Inference pipeline to Hazelcast featuring:
-    * Use of Hazelcast's low-latency data store to hold:
-        * Customer and Merchant feature data
-        * Feature engineering data needed to produce inputs for the Fraud Detection model
+    * Use of Hazelcast's fast data store to hold:
+        * Customer and Merchant feature data (e.g customer socio-economic attributes)
+        * Feature engineering data needed to tranform features into numerical inputs for a Fraud Detection
+            * The fraud detection model was trained with LightGBM framework and exported on ONNX format
     * Use of Hazelcast's stream processing and compute capability to:
         * process a stream of incoming credit card transactions
         * perform feature engineering to turn features into model inputs
         * calculate real-time features (e.g. distance from home, time of day, day of week)
-        * run a Fraud Detection model in ONNX format inside Hazelcast
-
+        * run the fraud detection model in Hazelcast 
 
 # Create a Kafka Cluster & Topic in With Confluent Cloud
 You will use Kafka as source of credit card transactions coming into your fraud detection inference pipeline.\
