@@ -74,7 +74,7 @@ docker context use myecscontext
 ```
 Check the docker-compose.yml file so you can validate the container that will be deployed to your AWS ECS service
 
-You can now deploy the hazelcast-onnx container with
+You can deploy the hazelcast-onnx container with
 ```
 docker compose up
 ```
