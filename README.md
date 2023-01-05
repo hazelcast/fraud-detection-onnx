@@ -1,9 +1,9 @@
 # Before you start
-Make sure you have:
+Make sure you have the following:
 * An AWS Cloud user with [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
 *  [Aws CLI](https://aws.amazon.com/cli/) installed and configured to work with your AWS account.
-* Docker Compose 
-* Hazelcast 5.2.1
+* Docker Compose - Included in [Docker Desktop](https://docs.docker.com/desktop/)
+* [Hazelcast 5.2.1](https://docs.hazelcast.com/hazelcast/5.2/getting-started/get-started-cli) installed on your system
 * [Git LFS](https://git-lfs.com/)
 
 
