@@ -2,6 +2,9 @@ package org.example.client;
 
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.HazelcastJsonValue;
+import com.hazelcast.internal.json.Json;
+import com.hazelcast.internal.json.JsonObject;
 import com.hazelcast.jet.datamodel.Tuple2;
 import com.hazelcast.jet.datamodel.Tuple3;
 import com.hazelcast.jet.datamodel.Tuple4;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.Map;
+import java.util.Random;
 
 import static org.example.client.LoadOnlineFeatures.loadOnlineFeatures;
 import static org.example.util.Util.BASE_DIR;
@@ -59,17 +63,18 @@ public class DeployFraudDetectionInference {
 
         // Set up ONNX Fraud Detection Model as a Service in the transaction processing pipeline
         ServiceFactory<?, LightGBMFraudDetectorService> fraudCheckingService = ServiceFactories
-                .sharedService(ctx ->new LightGBMFraudDetectorService(BASE_DIR + onnxModelFileName))
-                .toNonCooperative();
+                .sharedService(ctx ->new LightGBMFraudDetectorService(BASE_DIR + onnxModelFileName));
+                //.toNonCooperative();
 
         Pipeline p = Pipeline.create();
 
         p.readFrom(KafkaSources.kafka(
                         Util.kafkaConsumerProps(kafkaBroker, kafkaKey,kafkaSecret),
-                        cr -> new AbstractMap.SimpleEntry<>(cr.key().toString(),new JSONObject(cr.value().toString())),
+                        cr -> new AbstractMap.SimpleEntry<>(cr.key().toString(),new JSONObject(cr.value().toString()).put("start_time_nano",System.nanoTime())),
                         KAFKA_TOPIC))
+                //.put("start_time_nano",System.nanoTime())
                 .withNativeTimestamps(0)
-                .setLocalParallelism(8)
+                .setLocalParallelism(10)
                 //retrieve Merchant Features
                 .mapUsingIMap(Util.MERCHANT_MAP,
                         tup -> tup.getValue().getString("merchant"),
@@ -175,9 +180,42 @@ public class DeployFraudDetectionInference {
                     FraudDetectionResponse prediction =  service.getFraudProbability(tup.f2());
                     return Tuple4.tuple4(tup.f0(),tup.f1(),tup.f2(),prediction);
                 })
-                .filter (tup -> tup.f3().getFraudProbability() > 0.5)
-                //.map (tup -> tup.f3())
-                .writeTo(Sinks.logger());
+                .map(tup -> {
+                    JsonObject jsonObject = new JsonObject()
+                            .add("transaction_number", tup.f0().getString("trans_num"))
+                            .add("transaction_date", tup.f0().getString("transaction_date"))
+                            .add("is_fraud", tup.f0().getInt("is_fraud"))
+                            .add("amount", tup.f0().getDouble("amt"))
+                            .add("merchant", tup.f0().getString("merchant"))
+                            .add("merchant_lat", tup.f0().getDouble("merch_lat"))
+                            .add("merchant_lon", tup.f0().getDouble("merch_long"))
+                            .add("credit_card_number", tup.f0().getLong("cc_num"))
+                            .add("customer_name", tup.f1().getFirst() + " " + tup.f1().getLast())
+                            .add("customer_city", tup.f1().getCity())
+                            .add("customer_age_group", tup.f1().getAge_group())
+                            .add("customer_gender", tup.f1().getGender())
+                            .add("customer_lat", tup.f1().getLatitude())
+                            .add("customer_lon", tup.f1().getLongitude())
+                            .add("distance_from_home",tup.f2().getDistance_from_home())
+                            .add("transaction_weekday_code",tup.f2().getTransaction_weekday())
+                            .add("transaction_hour_code",tup.f2().getTransaction_hour())
+                            .add("transaction_month_code",tup.f2().getTransaction_month())
+                            .add("fraud_probability", tup.f3().getFraudProbability())
+                            .add("fraud_model_prediction", tup.f3().getPredictedLabel())
+                            .add("predicted_correctly", tup.f0().getInt("is_fraud")==tup.f3().getPredictedLabel())
+                            .add("inference_time_ns", tup.f3().getExecutionTimeNanoseconds())
+                            .add("transaction_processing_start_time_nano", tup.f0().getLong("start_time_nano"))
+                            .add("transaction_processing_total_time" , System.nanoTime() -  tup.f0().getLong("start_time_nano"));
+
+                    return jsonObject;
+                })
+                .writeTo(Sinks.mapWithUpdating("predictionResult",
+                        entry -> entry.getString("transaction_number","unknown"),
+                        (oldValue, entry) -> new HazelcastJsonValue(entry.toString())));
+
+                // .filter (tup -> tup.f3().getFraudProbability() > 0.5)
+                //.writeTo(Sinks.logger());
+
 
         Util.submitJob(p, client, SCORING_JOB_NAME);
 
