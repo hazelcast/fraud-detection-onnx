@@ -67,7 +67,7 @@ We've created a docker image preloaded with:
 
 This image can be deployed to your cloud provider of choice or run locally (preferably on an AMD64 machine).
 
-Note that the image will run on ARM devices, like an Apple M1-powered device, via emulation. However, the performance and stability is noticeably impacted when running in emulation mode on M1
+Note that the image will run on ARM devices, like an Apple M1-powered device, via emulation. However, the performance and stability is noticeably impacted when running in emulation mode on Apple M1 devices.
 
 ## Deploy Hazelcast-Onnx image to AWS ECS with Docker Compose
 
