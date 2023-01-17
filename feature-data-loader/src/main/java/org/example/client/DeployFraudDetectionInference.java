@@ -205,6 +205,7 @@ public class DeployFraudDetectionInference {
                             .add("predicted_correctly", tup.f0().getInt("is_fraud")==tup.f3().getPredictedLabel())
                             .add("inference_time_ns", tup.f3().getExecutionTimeNanoseconds())
                             .add("transaction_processing_start_time_nano", tup.f0().getLong("start_time_nano"))
+                            .add("transaction_processing_end_time_nano", System.nanoTime())
                             .add("transaction_processing_total_time" , System.nanoTime() -  tup.f0().getLong("start_time_nano"));
 
                     return jsonObject;
