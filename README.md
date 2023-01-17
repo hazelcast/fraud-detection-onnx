@@ -1,6 +1,9 @@
 # Before you start
 Make sure your system has the following components:
 * Docker Compose - Included in [Docker Desktop](https://docs.docker.com/desktop/)
+    * [Docker Compose for Mac](https://docs.docker.com/desktop/install/mac-install/)
+    * [Docker Compose for Linux](https://docs.docker.com/desktop/install/linux-install/)
+    * [Docker Compose for Windows](https://docs.docker.com/desktop/install/windows-install/)
 * [Hazelcast 5.2.1](https://docs.hazelcast.com/hazelcast/5.2/getting-started/get-started-cli) installed on your system
 * [Git LFS](https://git-lfs.com/)
 * [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
@@ -13,16 +16,17 @@ Make sure your system has the following components:
 In this demo, you will deploy a complete Fraud Detection Inference pipeline to Hazelcast. 
 The pipeline highlights two key capabilities in Hazelcast:
 * Fast (in-memory) data store to hold
-    * Customer and Merchant feature data (e.g customer socio-economic attributes)
-    * Feature engineering data dictionaries to tranform categorical features into numerical inputs for a Fraud Detection model
-        * The fraud detection model was trained using the LightGBM framework and then exported to ONNX format. 
+    * Customer and Merchant feature data (e.g customer socio-economic attributes, merchant category etc)
+    * Feature engineering data dictionaries used to tranform categorical features into numerical inputs for a Fraud Detection model
+
 * Efficient data stream processing and compute capability required to
     * Process a stream of incoming credit card transactions
     * Calculate real-time features (e.g. distance from home, time of day, day of week)
     * Perform low-latency customer and merchant feature data retrieval
     * Perform feature engineering to turn features into model inputs
-    * Run fraud detection model inside Hazelcast using ONNX runtime.
+    * Run a LightGBM fraud detection model inside Hazelcast using ONNX runtime.
         * Individual inference times under 0.1ms 
+        * Note: The was trained with LightGBM framework and exported to ONNX format. 
 
 # Create a Kafka Cluster & Topic with Confluent Cloud
 You will use Kafka as source of credit card transactions coming into your fraud detection inference pipeline.
@@ -80,7 +84,7 @@ docker compose up
 ```
 This will take 5-10 minutes to complete
 
-Once the process completes, you can check the hazelcast-onnx server name & port by running
+Once the process completes, you can check the `hazelcast-onnx` server name & port by running
 
 ```
 docker compose ps
@@ -88,7 +92,7 @@ docker compose ps
 
 ![Docker compose output screenshot](./images/docker-compose-ecs-up.png)
 
-For convenience, store the `hazelcast-onnx` address:port in an environment variable (HZ_ONNX)
+For convenience, store `hazelcast-onnx` server and port in an environment variable (HZ_ONNX)
 ```
 export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701
 ```
@@ -203,7 +207,7 @@ conda activate hz-python-sql
 streamlit run app.py
 ```
 The Fraud Analytics Dashboard should look like this
-[!Fraud Analytics Dashboard](./images/streamlit_dashboard.png)
+![Fraud Analytics Dashboard](./images/streamlit_dashboard.png)
 
 
 # Teardown - Stop all Containers
