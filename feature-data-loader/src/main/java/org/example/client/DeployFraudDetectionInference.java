@@ -72,7 +72,6 @@ public class DeployFraudDetectionInference {
                         Util.kafkaConsumerProps(kafkaBroker, kafkaKey,kafkaSecret),
                         cr -> new AbstractMap.SimpleEntry<>(cr.key().toString(),new JSONObject(cr.value().toString()).put("start_time_nano",System.nanoTime())),
                         KAFKA_TOPIC))
-                //.put("start_time_nano",System.nanoTime())
                 .withNativeTimestamps(0)
                 .setLocalParallelism(10)
                 //retrieve Merchant Features
@@ -202,10 +201,7 @@ public class DeployFraudDetectionInference {
                             .add("transaction_month_code",tup.f2().getTransaction_month())
                             .add("fraud_probability", tup.f3().getFraudProbability())
                             .add("fraud_model_prediction", tup.f3().getPredictedLabel())
-                            .add("predicted_correctly", tup.f0().getInt("is_fraud")==tup.f3().getPredictedLabel())
                             .add("inference_time_ns", tup.f3().getExecutionTimeNanoseconds())
-                            .add("transaction_processing_start_time_nano", tup.f0().getLong("start_time_nano"))
-                            .add("transaction_processing_end_time_nano", System.nanoTime())
                             .add("transaction_processing_total_time" , System.nanoTime() -  tup.f0().getLong("start_time_nano"));
 
                     return jsonObject;
@@ -213,9 +209,6 @@ public class DeployFraudDetectionInference {
                 .writeTo(Sinks.mapWithUpdating("predictionResult",
                         entry -> entry.getString("transaction_number","unknown"),
                         (oldValue, entry) -> new HazelcastJsonValue(entry.toString())));
-
-                // .filter (tup -> tup.f3().getFraudProbability() > 0.5)
-                //.writeTo(Sinks.logger());
 
 
         Util.submitJob(p, client, SCORING_JOB_NAME);
