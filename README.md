@@ -1,10 +1,12 @@
 # Before you start
-Make sure you have the following:
-* An AWS Cloud user with [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
-*  [Aws CLI](https://aws.amazon.com/cli/) installed and configured to work with your AWS account.
+Make sure your system has the following components:
 * Docker Compose - Included in [Docker Desktop](https://docs.docker.com/desktop/)
 * [Hazelcast 5.2.1](https://docs.hazelcast.com/hazelcast/5.2/getting-started/get-started-cli) installed on your system
 * [Git LFS](https://git-lfs.com/)
+* [Conda] (https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
+* AWS User and CLI
+    * [Aws CLI](https://aws.amazon.com/cli/) installed and configured to work with your AWS user
+    * Make sure your Your AWS user has the [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
 
 
 # Fraud Detection With Hazelcast and ONNX
@@ -26,8 +28,7 @@ The pipeline highlights two key capabilities in Hazelcast:
 # Create a Kafka Cluster & Topic with Confluent Cloud
 You will use Kafka as source of credit card transactions coming into your fraud detection inference pipeline.
 
-* A simple way to get Kafka running is to [Create a Kafka Cluster in Confluent Cloud](
-https://docs.confluent.io/cloud/current/get-started/index.html#quick-start-for-ccloud)
+* A simple way to get Kafka running is to [Create a Kafka Cluster in Confluent Cloud](https://www.confluent.io/get-started/?product=cloud)
 
     * Once your cluster is created, go to `Cluster Settings-> Endpoints` and capture your Kafka Cluster `bootstrap server` URL
 
@@ -88,7 +89,7 @@ docker compose ps
 
 ![Docker compose output screenshot](./images/docker-compose-ecs-up.png)
 
-For convenience, store the `hazelcast-onnx` address:port as an environment var
+For convenience, store the `hazelcast-onnx` address:port in an environment variable (HZ_ONNX)
 ```
 export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701
 ```
@@ -169,19 +170,47 @@ You can see how the original transaction has been processed by the Fraud Detecti
 ![Potential Fraud Cases image](./images/potential-fraud-case.png)
 
 # Monitoring in Hazelcast
-You can start Hazelcast Management Center and check status of the multiple jobs
+You can start a local Hazelcast Management Center instance and check status of the multiple jobs
+
+On a separate terminal window, run
+```
+hz-mc start
+```
 
 Create a connection to you `$HZ_ONNX` endpoint
 
 Find details of the Fraud Detection Inference Pipeline\
 ![Management Center showing Fraud Detection Inference Job](./images/mc.png)
 
-In this case, please note that Total Out / Last Minute Out refer to potential fraud cases only!
 
 
-# Stop all Containers
+# Fraud Analytics Dashboard (Python, SQL and Hazelcast)
+We've included a simple Analytics dashboard built using Streamlit to showcase how you could use SQL and Python to query JSON data stored in Hazelcast!
 
 ```
+cd ../python-sql
+```
+
+Next, let's create a conda environment with Streamlit, Python 3.9, Hazelcast Python client (along with all of the dependencies needed to run the Fraud Analytics dashboard)
+```
+conda env create -f environment.yml
+```
+This will take 1-2 minutes to complete.
+
+Once it finishes, you can activate the newly created conda environment and run the dashboard by
+
+```
+conda activate hz-python-sql
+streamlit run app.py
+```
+The Fraud Analytics Dashboard should look like this
+[!Fraud Analytics Dashboard](./images/streamlit_dashboard.png)
+
+
+# Teardown - Stop all Containers
+
+```
+cd ..
 docker compose down
 ```
 
@@ -206,7 +235,3 @@ docker-compose -f build-hz-onnx-image.yml build
 docker tag fraud-detection-onnx-hazelcast-onnx-debian <github-username>/<image-name>
 docker push <github-username>/<image-name> 
 ```
-
-## (Optional) Monitoring in Grafana
-
-To-Do

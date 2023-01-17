@@ -1,0 +1,14 @@
+name: hz-python-sql
+channels:
+  - defaults
+  - conda-forge
+  - plotly
+dependencies:
+  - python=3.9
+  - conda-forge::jupyterlab=3.5.2
+  - conda-forge::streamlit=1.16.0
+  - scipy=1.9.3
+  - plotly::plotly=5.11.0
+  - pip
+  - pip:
+    - hazelcast-python-client
