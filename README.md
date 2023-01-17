@@ -181,19 +181,17 @@ Explore your Fraud Detection Inference Pipeline
 # Fraud Analytics Dashboard (Python, SQL and Hazelcast)
 We've included a simple Analytics dashboard built using Streamlit.
 
-Check the code in `app.py` to see examples of how you can query JSON data stored in Hazelcast with SQL!
-
 ```
 cd ../python-sql
 ```
 
-Next, let's create a conda environment with Streamlit, Python 3.9, Hazelcast Python client (along with all of the dependencies needed to run the Fraud Analytics dashboard)
+First, let's create a conda environment with Streamlit, Python 3.9, Hazelcast Python client (along with all of the dependencies needed to run the Fraud Analytics dashboard)
 ```
 conda env create -f environment.yml
 ```
 This will take 1-2 minutes to complete.
 
-Once it finishes, you can activate the newly created conda environment and run the dashboard by
+you can now activate the newly created conda environment and run the dashboard by
 
 ```
 conda activate hz-python-sql
@@ -202,6 +200,7 @@ streamlit run app.py
 The Fraud Analytics Dashboard should look like this
 ![Fraud Analytics Dashboard](./images/streamlit_dashboard.png)
 
+Don't forget to check the code in `python-sql\app.py` to see examples of how you can query JSON data stored in Hazelcast with SQL!
 
 # Teardown - Stop all Containers
 
@@ -218,16 +217,18 @@ This will prevent future `docker compose` inadvertedly deploying to AWS ECS!
 docker context use default
 ```
 
-## (Optional) Train the model and convert it to ONNX
-
-To-Do
-
 
 ## (Optional) Building Your own hazelcast-onnx image
-If you wanted to create your own hazelcast-onnx image and preload it with your data and model, you can check the [`Dockerfile`](./hz-onnx-debian/Dockerfile) in `hz-onnx-debian` for inspiration.
+If you want to create your own hazelcast-onnx image and preload it with your data and model, you can check the [`Dockerfile`](./hz-onnx-debian/Dockerfile) in `hz-onnx-debian` for ideas on how to bundle all components into your image
+
+Once you are happy with your updates to `Dockerfile`, you can create and publish your image by running 
 
 ```
 docker-compose -f build-hz-onnx-image.yml build
-docker tag fraud-detection-onnx-hazelcast-onnx-debian <github-username>/<image-name>
-docker push <github-username>/<image-name> 
+docker tag fraud-detection-onnx-hazelcast-onnx-debian <your-github-username>/<image-name>
+docker push <your-github-username>/<image-name> 
 ```
+
+## (Optional) Train the model and convert it to ONNX
+
+To-Do
