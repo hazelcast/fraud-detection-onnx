@@ -141,16 +141,13 @@ After a few seconds, you should see an output similar to
 # About The Fraud Detection Inference Pipeline ...
 
 At a high-level, the Fraud Detection inference pipeline executes the following steps:
-* Take a transaction from Kafka (with minimal information such as Credit Card Number, Merchant, Amount, Transaction date and Geolocation )
-* Enrich this transaction with with Customer and Merchant Features (e.g. customer's socio-demographic data, historical purchases etc, average spent, spent in last month, etc)
+* Start pulling transactions from Kafka (with minimal information such as Credit Card Number, Merchant, Amount, Transaction date and Geolocation )
+* Enrich these transactions with with Customer and Merchant Features (e.g. customer's socio-demographic data, historical purchases etc, average spent, spent in last month, etc)
 * Calculate real-time features such as "distance from home" (distance from transaction Geolocation and the Customer's billing address).
 * Perform Feature engineering required to convert Customer and Merchant features into numeric values required by the Fraud Detection model
-* Run the Fraud Detection model to obtain a fraud probability
+* Run the Fraud Detection model to obtain a fraud probability for each transaction
+* Store prediction results (in JSON format) as Hazelcast maps for further analysis
 
-Finally, and for the purposes of this demo, the pipeline perform two actions:
-
-* All potentially fraudulent transactions, (e.g. filter those with fraud probability higher than 0.5), are logged to the console
-* <TO-DO> All predictions and incoming transactions are saved in memory (as IMaps) 24 hours for further analysis
 
 ## Production Ideas
 In a real-world scenario, the end of the inference pipeline is typically the start of other pipelines. For example, you could create pipelines to:
