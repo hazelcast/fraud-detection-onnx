@@ -10,6 +10,7 @@ Make sure your system has the following components:
 * AWS User and CLI
     * [Aws CLI](https://aws.amazon.com/cli/) installed and configured to work with your AWS user
     * Your AWS user has the [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
+    * You will need to use `aws configure` with your AWS user to set up preferred AWS region (e.g. us-east-2)
 
 # Fraud Detection With Hazelcast and ONNX
 
@@ -32,6 +33,8 @@ The pipeline highlights two key capabilities in Hazelcast:
 You will use Kafka as source of credit card transactions coming into your fraud detection inference pipeline.
 
 * A simple way to get Kafka running is to [Create a Kafka Cluster in Confluent Cloud](https://www.confluent.io/get-started/?product=cloud)
+
+    * Make sure you deploy your Kafka Cluster to AWS and use the same region used previously set in `aws configure` 
 
     * Once your cluster is created, go to `Cluster Settings-> Endpoints` and capture your Kafka Cluster `bootstrap server` URL
 
