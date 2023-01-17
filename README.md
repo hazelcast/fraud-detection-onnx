@@ -110,7 +110,7 @@ Followed by
 hz-cli submit -v -t $HZ_ONNX -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar 100k-transactions.csv
 ```
 
-After a few seconds, you should see a "Transaction Loader Job" success message in the output
+You should see a "Transaction Loader Job" success message in the output
 
 ![Transaction loader success message ](./images/transaction-loader-success.png)
 
