@@ -159,18 +159,6 @@ In a real-world scenario, the end of the inference pipeline is typically the sta
 * Trigger automatic alerts to ML-Ops team warning about model/data drift.
 * Update Customer "online features" such as `"last known coordinates"`, `"last transaction amount"`. `"amount spent in the last 24 hours"`, `"number/value of transactions attempted in the last X minutes/days"`
 
-# Check Logs for potential Fraudulent transactions
-You should see some of these potential fraud cases identified by the model by inspecting the logs.
-
-```
-docker compose logs hazelcast-onnx
-```
-
-You should see "potential fraud cases" as shown in the image below\
-
-You can see how the original transaction has been processed by the Fraud Detection pipeline
-
-![Potential Fraud Cases image](./images/potential-fraud-case.png)
 
 # Monitoring in Hazelcast
 You can start a local Hazelcast Management Center instance and check status of the multiple jobs
@@ -180,15 +168,19 @@ On a separate terminal window, run
 hz-mc start
 ```
 
-Create a connection to you `$HZ_ONNX` endpoint
+Open Hazelcast Management Center by navigating to `localhost:8080`
 
-Find details of the Fraud Detection Inference Pipeline\
+Create a connection to your Hazelcast server:port (You stored it in the `$HZ_ONNX` environment variable previously)
+![Create a connection to your Hazelcast](./images/hz-mc-connection.png)
+
+Explore your Fraud Detection Inference Pipeline
 ![Management Center showing Fraud Detection Inference Job](./images/mc.png)
 
 
-
 # Fraud Analytics Dashboard (Python, SQL and Hazelcast)
-We've included a simple Analytics dashboard built using Streamlit to showcase how you could use SQL and Python to query JSON data stored in Hazelcast!
+We've included a simple Analytics dashboard built using Streamlit.
+
+Check the code in `app.py` to see examples of how you can query JSON data stored in Hazelcast with SQL!
 
 ```
 cd ../python-sql
