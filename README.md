@@ -170,7 +170,8 @@ hz-mc start
 
 Open Hazelcast Management Center by navigating to `localhost:8080`
 
-Create a connection to your Hazelcast server:port (You stored it in the `$HZ_ONNX` environment variable previously)
+Create a connection to your Hazelcast server:port 
+(You stored it in the `$HZ_ONNX` environment variable) 
 ![Create a connection to your Hazelcast](./images/hz-mc-connection.png)
 
 Explore your Fraud Detection Inference Pipeline

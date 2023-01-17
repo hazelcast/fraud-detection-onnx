@@ -36,11 +36,7 @@ def get_hazelcast_client(cluster_members=['127.0.0.1']):
             fraud_model_prediction INT,
             fraud_probability DOUBLE,
             inference_time_ns BIGINT,
-            transaction_processing_total_time BIGINT,
-            transaction_processing_start_time_nano BIGINT,
-            transaction_processing_end_time_nano BIGINT,
-            is_fraud INT
-           
+            transaction_processing_total_time BIGINT
             )
             TYPE IMap
             OPTIONS (
@@ -62,6 +58,7 @@ def get_df(_client, sql_statement, date_cols):
     column_names = [c.name for c in metadata.columns]
     column_types = [sql_to_df_types[c.type] for c in metadata.columns]
     columns_dict = dict(zip(column_names, column_types))
+
 
     #build a dict col_name -> list of values 
     column_values = {}
@@ -172,7 +169,7 @@ if hazelcast_node:
 else:
     client = get_hazelcast_client()
 #retrieve data from hazelcast
-df2 = get_df(client,'select * from predictionResult LIMIT 1000',['transaction_date'])
+df2 = get_df(client,'select * from predictionResult LIMIT 100000',['transaction_date'])
 #get continuous & categorical variable names
 categorical_features = get_categorical_variables(df2)
 continuous_features = get_continous_variables()
@@ -243,7 +240,7 @@ with col_chart2:
 st.header('Analyst - SQL Playground','sql_playground')
 sql_statement = st.text_area('Enter a SQL Query', 'SELECT * \nFROM predictionResult \nLIMIT 100',200)
 
-deploy_heuristic_button = st.button('Deploy Heuristic', type="secondary", disabled=False)
+deploy_heuristic_button = st.button('Deploy New Fraud Detection Pattern', type="secondary", disabled=False)
 #st.write(deploy_heuristic_button)
 if deploy_heuristic_button:
     st.balloons()
