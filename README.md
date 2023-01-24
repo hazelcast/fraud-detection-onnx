@@ -68,9 +68,10 @@ We've created a docker image preloaded with:
 * ONNX runtime libraries in a supported platform/OS/Programming language combination (e.g AMD64/Linux/Java)
 * Some sample Transaction data (in csv files) for testing purposes
 
-This image can be deployed to your cloud provider of choice or run locally (preferably on an AMD64 machine).
+This image can be deployed to the cloud provider of your choice or run locally (preferably on an AMD64 machine).
+For simplicity of deployment (via `docker compose`), we'll use AWS ECS.
 
-Note that the image will run on ARM devices, like an Apple M1-powered device, via emulation. However, the performance and stability is noticeably impacted when running in emulation mode on Apple M1 devices.
+Note that the image will run on ARM devices, like an Apple M1-powered device, via emulation. However, the performance and stability is negatively impacted when running in emulation mode on Apple M1 devices.
 
 ## Deploy Hazelcast-Onnx image to AWS ECS with Docker Compose
 
@@ -102,7 +103,7 @@ export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaw
 
 # Load some transactions into Kafka
 
-Next, You will Hazelcast's CLI, `hz-cli`, to submit a data loading job that will upload 100k "Transactions" into Kafka. The transactions are preloaded as CSV files in your `hazelcast-onnx` container.
+Next, You will use Hazelcast's CLI, `hz-cli`, to submit a data loading job that will upload 100k "Transactions" into Kafka. The transactions are preloaded as CSV files in your `hazelcast-onnx` container.
 
 ```
 cd transaction-loader 
