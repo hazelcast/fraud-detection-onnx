@@ -4,7 +4,6 @@ Make sure your system has the following components:
     * [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
     * [Docker Desktop for Linux](https://docs.docker.com/desktop/install/linux-install/)
     * [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
-* [Hazelcast 5.2.1](https://docs.hazelcast.com/hazelcast/5.2/getting-started/get-started-cli) installed on your system
 * [Git LFS](https://git-lfs.com/)
 * [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
 * AWS User and CLI
