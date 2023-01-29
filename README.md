@@ -10,7 +10,7 @@ Make sure your system has the following components:
 * AWS User and CLI
     * [Aws CLI](https://aws.amazon.com/cli/) installed and configured to work with your AWS user
     * Your AWS user has the [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
-    * You will need to use `aws configure` with your AWS user to set up preferred AWS region (e.g. us-east-2)
+    * Run `aws configure` with your AWS user to set up preferred AWS region (e.g. us-east-2), AWS Key & Secret
 
 # Fraud Detection With Hazelcast and ONNX
 
@@ -61,34 +61,52 @@ Make sure you name your Topic "Transactions". It is important!
 
 ![Topic Screenshot](./images/kafka-topic.png)
 
-# Deploy a Hazelcast-Onnx Container to AWS ECS
+# Deploy Hazelcast-Onnx, Management Center and Fraud Dasshboard to AWS ECS
 
-We've created a docker image preloaded with:
+In this demo, you will spin up 3 containers in AWS ECS:
+* A single-node Hazelcast cluster
+* A Hazelcast Management Center 
+* A custom Fraud Analytics dashboard 
+
+These container images can be deployed to the cloud provider of your choice or run locally (preferably on an AMD64 machine).
+For simplicity, we'll use AWS ECS to deploy via the familiar  `docker compose` commmand.
+
+
+## The Hazelcast + Onnx container
+We've built a docker image preloaded with:
 * Hazelcast 5.2.1 running on Ubuntu 22.04
 * ONNX runtime libraries in a supported platform/OS/Programming language combination (e.g AMD64/Linux/Java)
 * Some sample Transaction data (in csv files) for testing purposes
 
-This image can be deployed to the cloud provider of your choice or run locally (preferably on an AMD64 machine).
-For simplicity of deployment (via `docker compose`), we'll use AWS ECS.
+Note that this image will run on ARM devices, like an Apple M1-powered device, via emulation. 
+However, the performance and stability is negatively impacted when running in emulation mode on Apple M1 devices.
 
-Note that the image will run on ARM devices, like an Apple M1-powered device, via emulation. However, the performance and stability is negatively impacted when running in emulation mode on Apple M1 devices.
+## The custom Fraud Analytics Dashboard
+This docker image bundles a Streamlit app that connects automatically to the `hazelcast-onnx` container. 
+The app is
+* Written entirely in Python,
+* Uses Hazelcast Python client to retrieve data from Hazelcast via SQL
 
-## Deploy Hazelcast-Onnx image to AWS ECS with Docker Compose
+
+## Deploy containers to AWS ECS with Docker Compose
 
 Create a docker "Context" to deploy a `docker compose` file to AWS ECS
 ```
 docker context create myecscontext
 docker context use myecscontext
 ```
-Check the docker-compose.yml file so you can validate the container that will be deployed to your AWS ECS service
 
-You can deploy the hazelcast-onnx container with
+Now that you've switch to your `myecscontext`, docker compose will use AWS ECS as deployment target.
+
 ```
 docker compose up
 ```
 This will take 5-10 minutes to complete
 
-Once the process completes, you can check the `hazelcast-onnx` server name & port by running
+Once the process completes, you can check the 3 containers are up and running
+* `hazelcast-onnx` 
+* `fraud-dashboard`
+* `management-center`
 
 ```
 docker compose ps
@@ -96,35 +114,22 @@ docker compose ps
 
 ![Docker compose output screenshot](./images/docker-compose-ecs-up.png)
 
-For convenience, store `hazelcast-onnx` server and port in an environment variable (HZ_ONNX)
+For convenience, store `hazelcast-onnx` server and port in an environment variable (HZ_ONNX).
+For example:
 ```
 export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701
 ```
 
-# Load some transactions into Kafka
-
-Next, You will use Hazelcast's CLI, `hz-cli`, to submit a data loading job that will upload 100k "Transactions" into Kafka. The transactions are preloaded as CSV files in your `hazelcast-onnx` container.
-
-```
-cd transaction-loader 
-```
-
-Followed by 
-```
-hz-cli submit -v -t $HZ_ONNX -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar 100k-transactions.csv
-```
-
-You should see a "Transaction Loader Job" success message in the output
-
-![Transaction loader success message ](./images/transaction-loader-success.png)
-
+Make a note of the IP:port of the management center and fraud detection containers. The only difference with your `HZ_ONNX` container is the port number! AWS created a Load Balancer in front of the 3 containers.
+If your `HZ_ONNX` is `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701`, then
+* Your Management Center will be accessible on `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8080`
+* Your Fraud Analytics Dashboard will be on  `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8501`
 
 # Load Feature data and Fraud Detection Inference Jobs into Hazelcast
 
-
 These Feature data jobs will simply load the Customer & Features from JSON and CSV files into [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) 
 
-Once these jobs are executed, the fraud inference pipeline will also be deployed. This will start processing transactions in Kafka
+Once these jobs are executed, the fraud inference pipeline will also be deployed. 
 
 First, go into the feature-data-loader folder
 ```
@@ -161,43 +166,40 @@ In a real-world scenario, the end of the inference pipeline is typically the sta
 * Update Customer "online features" such as `"last known coordinates"`, `"last transaction amount"`. `"amount spent in the last 24 hours"`, `"number/value of transactions attempted in the last X minutes/days"`
 
 
+
+# Load some transactions into Kafka
+
+Next, You will load 100k transactions into Kafka. This will trigger the Fraud Detection Pipeline submitted in the previous section. 
+
+Note that the transactions are preloaded as CSV files in your `hazelcast-onnx` container.
+
+```
+cd transaction-loader 
+```
+
+Followed by 
+```
+hz-cli submit -v -t $HZ_ONNX -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar 100k-transactions.csv
+```
+
+You should see a "Transaction Loader Job" success message in the output
+
+![Transaction loader success message ](./images/transaction-loader-success.png)
+
+As the transactions load into Kafka, they will trigger the Fraud Detection Inference Pipeline
+
 # Monitoring in Hazelcast
-You can start a local Hazelcast Management Center instance and check status of the multiple jobs
 
-On a separate terminal window, run
-```
-hz-mc start
-```
+Use your browser to navigate to Management center  (e.g `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8080`)
 
-Open Hazelcast Management Center by navigating to `localhost:8080`
-
-Create a connection to your Hazelcast server:port 
-(You stored it in the `$HZ_ONNX` environment variable) 
-![Create a connection to your Hazelcast](./images/hz-mc-connection.png)
 
 Explore your Fraud Detection Inference Pipeline
 ![Management Center showing Fraud Detection Inference Job](./images/mc.png)
 
 
 # Fraud Analytics Dashboard (Python, SQL and Hazelcast)
-We've included a simple Analytics dashboard built using Streamlit.
+Use your browser to navigate to Fraud Analytics dashboard  (e.g `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8501`)
 
-```
-cd ../python-sql
-```
-
-First, let's create a conda environment with Streamlit, Python 3.9, Hazelcast Python client (along with all of the dependencies needed to run the Fraud Analytics dashboard)
-```
-conda env create -f environment.yml
-```
-This will take 1-2 minutes to complete.
-
-you can now activate the newly created conda environment and run the dashboard by
-
-```
-conda activate hz-python-sql
-streamlit run app.py
-```
 The Fraud Analytics Dashboard should look like this
 ![Fraud Analytics Dashboard](./images/streamlit_dashboard.png)
 
@@ -210,6 +212,8 @@ cd ..
 docker compose down
 ```
 
+This will take another 5-10 minutes
+
 You may also want to return Docker to your "default" context. 
 
 This will prevent future `docker compose` inadvertedly deploying to AWS ECS!
@@ -220,11 +224,12 @@ docker context use default
 
 
 ## (Optional) Building Your own hazelcast-onnx image
-If you want to create your own hazelcast-onnx image and preload it with your data and model, you can check the [`Dockerfile`](./hz-onnx-debian/Dockerfile) in `hz-onnx-debian` for ideas on how to bundle all components into your image
+If you want to create your own hazelcast-onnx image and preload it with your data and model, you can check the [`Dockerfile`](./hz-onnx-debian/Dockerfile) under the  `hz-onnx-debian` folder.
 
 Once you are happy with your updates to `Dockerfile`, you can create and publish your image by running 
 
 ```
+cd ..
 docker-compose -f build-hz-onnx-image.yml build
 docker tag fraud-detection-onnx-hazelcast-onnx-debian <your-github-username>/<image-name>
 docker push <your-github-username>/<image-name> 
