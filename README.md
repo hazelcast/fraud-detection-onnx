@@ -75,7 +75,7 @@ For simplicity, we'll use AWS ECS to deploy via the familiar  `docker compose` c
 ## The Hazelcast + Onnx container
 We've built a docker image preloaded with:
 * Hazelcast 5.2.1 running on Ubuntu 22.04
-* ONNX runtime libraries in a supported platform/OS/Programming language combination (e.g AMD64/Linux/Java)
+* [ONNX runtime](https://onnxruntime.ai/) in a supported platform/OS/Programming language combination. In this case, AMD64/Linux/Java
 * Some sample Transaction data (in csv files) for testing purposes
 
 Note that this image will run on ARM devices, like an Apple M1-powered device, via emulation. 
