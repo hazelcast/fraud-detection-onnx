@@ -6,8 +6,8 @@ Make sure your system has the following components:
     * [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
 * [Git LFS](https://git-lfs.com/)
 * AWS User and [Aws CLI](https://aws.amazon.com/cli/) 
-    * Your AWS user has the [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
     * Run `aws configure` with your AWS user to set up preferred AWS region (e.g. us-east-2), AWS Key, Secret, token 
+    * Your AWS user has the [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
 
 # Fraud Detection With Hazelcast and ONNX
 
