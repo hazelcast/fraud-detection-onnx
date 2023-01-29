@@ -1,0 +1,14 @@
+version: '3.4'
+services:
+  fraud-dashboard:
+    image: fraud-detection-onnx-fraud-dashboard
+    ports: 
+    - "8501:8501"
+    environment:
+    - HZ_ONNX=fraud-LoadB-1XAHXDLPTZ0NT-696bb7e01ee9c7c4.elb.us-east-2.amazonaws.com:5701
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
+  

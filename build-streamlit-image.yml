@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  fraud-dashboard:
+    build: python-sql/.
+    platform: linux/amd64
+    ports:
+      - "8501:8501"

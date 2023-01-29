@@ -1,0 +1,5 @@
+streamlit
+scipy
+plotly
+plotly-express
+hazelcast-python-client
