@@ -115,15 +115,15 @@ docker compose ps
 ![Docker compose output screenshot](./images/docker-compose-ecs-up.png)
 
 For convenience, store `hazelcast-onnx` server and port in an environment variable (HZ_ONNX).
-For example:
 ```
 export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701
 ```
 
-Make a note of the IP:port of the management center and fraud detection containers. The only difference with your `HZ_ONNX` container is the port number! AWS created a Load Balancer in front of the 3 containers.
+Make a note of the IP:port of the `management-center` and `fraud-dashboard` services. 
+The only difference with your `HZ_ONNX` container is the port number! This is because AWS created a Load Balancer in front of the 3 containers.
 If your `HZ_ONNX` is `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701`, then
-* Your Management Center will be accessible on `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8080`
-* Your Fraud Analytics Dashboard will be on  `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8501`
+* Your `management-center` will be accessible on `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8080`
+* Your `fraud-dashboard` will be on  `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8501`
 
 # Load Feature data and Fraud Detection Inference Jobs into Hazelcast
 
