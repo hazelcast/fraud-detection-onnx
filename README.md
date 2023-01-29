@@ -78,13 +78,13 @@ We've built a docker image preloaded with:
 * [ONNX runtime](https://onnxruntime.ai/) in a supported platform/OS/Programming language combination. In this case, AMD64/Linux/Java
 * Some sample Transaction data (in csv files) for testing purposes
 
-Note that this image will run on ARM devices, like an Apple M1-powered device, via emulation. 
+This image will run on ARM devices, like an Apple M1-powered device, via emulation. 
 However, the performance and stability is negatively impacted when running in emulation mode on Apple M1 devices.
 
 ## The  Fraud Analytics Dashboard
 This docker image bundles a custom Streamlit app that connects automatically to the `hazelcast-onnx` container. 
 The app:
-* is Written entirely in Python,
+* is Written entirely in Python
 * Uses Hazelcast Python client and SQL to query JSON data stored in Hazelcast
 
 
@@ -96,14 +96,14 @@ docker context create myecscontext
 docker context use myecscontext
 ```
 
-Now that you've switch to your `myecscontext`, docker compose will use AWS ECS as deployment target.
+Now that you've switched to your `myecscontext`, `docker compose` will deploy to AWS ECS.
 
 ```
 docker compose up
 ```
 This will take 5-10 minutes to complete
 
-Once the process completes, you can check the 3 containers are up and running
+Once the process completes, you can check the 3 `Services` are up and running
 * `hazelcast-onnx` 
 * `fraud-dashboard`
 * `management-center`
