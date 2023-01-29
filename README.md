@@ -65,9 +65,6 @@ In this demo, you will spin up 3 containers in AWS ECS:
 * A Hazelcast Management Center instance
 * A custom Fraud Analytics dashboard 
 
-These container images can be deployed to the cloud provider of your choice or run locally (preferably on an AMD64 machine).
-For simplicity, we'll use AWS ECS to deploy via the familiar  `docker compose` commmand.
-
 
 ## The Hazelcast + Onnx container
 We've built a docker image preloaded with:
