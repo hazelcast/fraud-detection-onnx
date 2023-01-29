@@ -78,8 +78,8 @@ However, the performance and stability is negatively impacted when running in em
 ## The  Fraud Analytics Dashboard
 This docker image bundles a custom Streamlit app that connects automatically to the `hazelcast-onnx` container. 
 The app:
-* is Written entirely in Python
-* Uses Hazelcast Python client and SQL to query JSON data stored in Hazelcast
+* is written entirely in Python
+* Uses Hazelcast Python client to query JSON data stored in Hazelcast with SQL
 
 
 ## Deploy containers to AWS ECS with Docker Compose
