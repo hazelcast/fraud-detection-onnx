@@ -120,7 +120,7 @@ export HZ_ONNX=ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaw
 ```
 
 Make a note of the IP:port of the `management-center` and `fraud-dashboard` services. 
-The only difference with your `HZ_ONNX` container is the port number! This is because AWS created a Load Balancer in front of the 3 containers.
+
 If your `HZ_ONNX` is `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:5701`, then
 * Your `management-center` will be accessible on `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8080`
 * Your `fraud-dashboard` will be on  `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8501`
