@@ -1,7 +1,8 @@
 version: '3.4'
 services:
   hazelcast-onnx:
-    image: docker.io/edsandovalhz/hazelcast-onnx
+    #image: docker.io/edsandovalhz/hazelcast-onnx
+    image: docker.io/edsandovalhz/hz-onnx-awsecs
     ports:
       - "5701:5701"
     environment:
@@ -10,6 +11,28 @@ services:
       resources:
         limits:
           cpus: '4'
-        reservations:
+          memory: 8Gb
+  fraud-dashboard:
+    image: docker.io/edsandovalhz/fraud-dashboard
+    ports: 
+    - "8501:8501"
+    environment:
+    - HZ_ONNX=hazelcast-onnx:5701
+    deploy:
+      resources:
+        limits:
           cpus: '4'
+          memory: 8Gb
+  management-center:
+    image: hazelcast/management-center:5.2.1
+    ports:
+    - "8080:8080"
+    environment:
+    - MC_DEFAULT_CLUSTER=dev
+    - MC_DEFAULT_CLUSTER_MEMBERS=hazelcast-onnx
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8Gb
   
