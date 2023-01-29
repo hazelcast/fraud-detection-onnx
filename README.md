@@ -194,8 +194,8 @@ Use your browser to navigate to Management center  (e.g `ecsde-LoadB-1NHRSHPTW92
 
 
 Explore your Fraud Detection Inference Pipeline
-![Management Center showing Fraud Detection Inference Job](./images/mc.png)
 
+![Management Center showing Fraud Detection Inference Job](./images/mc.png)
 
 # Fraud Analytics Dashboard (Python, SQL and Hazelcast)
 Use your browser to navigate to Fraud Analytics dashboard  (e.g `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8501`)
@@ -203,7 +203,7 @@ Use your browser to navigate to Fraud Analytics dashboard  (e.g `ecsde-LoadB-1NH
 The Fraud Analytics Dashboard should look like this
 ![Fraud Analytics Dashboard](./images/streamlit_dashboard.png)
 
-Don't forget to check the code in `python-sql\app.py` to see examples of how you can query JSON data stored in Hazelcast with SQL!
+Don't forget to check the source code in `python-sql\app.py` for ideas on how to query JSON data stored in Hazelcast with SQL!
 
 # Teardown - Stop all Containers
 
