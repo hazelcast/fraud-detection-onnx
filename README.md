@@ -5,7 +5,6 @@ Make sure your system has the following components:
     * [Docker Desktop for Linux](https://docs.docker.com/desktop/install/linux-install/)
     * [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
 * [Git LFS](https://git-lfs.com/)
-* [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
 * AWS User and CLI
     * [Aws CLI](https://aws.amazon.com/cli/) installed and configured to work with your AWS user
     * Your AWS user has the [IAM permissions listed here](https://docs.docker.com/cloud/ecs-integration/#run-an-application-on-ecs)
