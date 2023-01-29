@@ -81,11 +81,11 @@ We've built a docker image preloaded with:
 Note that this image will run on ARM devices, like an Apple M1-powered device, via emulation. 
 However, the performance and stability is negatively impacted when running in emulation mode on Apple M1 devices.
 
-## The custom Fraud Analytics Dashboard
-This docker image bundles a Streamlit app that connects automatically to the `hazelcast-onnx` container. 
-The app is
-* Written entirely in Python,
-* Uses Hazelcast Python client to retrieve data from Hazelcast via SQL
+## The  Fraud Analytics Dashboard
+This docker image bundles a custom Streamlit app that connects automatically to the `hazelcast-onnx` container. 
+The app:
+* is Written entirely in Python,
+* Uses Hazelcast Python client and SQL to query JSON data stored in Hazelcast
 
 
 ## Deploy containers to AWS ECS with Docker Compose
