@@ -61,11 +61,11 @@ Make sure you name your Topic "Transactions". It is important!
 
 ![Topic Screenshot](./images/kafka-topic.png)
 
-# Deploy Hazelcast-Onnx, Management Center and Fraud Dasshboard to AWS ECS
+# Deploy Hazelcast-Onnx, Management Center and Fraud Analytics Dashboard to AWS ECS
 
 In this demo, you will spin up 3 containers in AWS ECS:
 * A single-node Hazelcast cluster
-* A Hazelcast Management Center 
+* A Hazelcast Management Center instance
 * A custom Fraud Analytics dashboard 
 
 These container images can be deployed to the cloud provider of your choice or run locally (preferably on an AMD64 machine).
