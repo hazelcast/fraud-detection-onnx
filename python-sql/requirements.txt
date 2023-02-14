@@ -1,5 +1,6 @@
-streamlit
-scipy
-plotly
+streamlit==1.18.0
+scipy==1.9.3
+plotly==5.11.0
 plotly-express
-hazelcast-python-client
+hazelcast-python-client==5.1
+streamlit_plotly_events==0.0.6

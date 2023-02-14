@@ -5,10 +5,11 @@ import plotly.graph_objects as go
 import hazelcast
 import plotly.express as px
 import os
+from streamlit_plotly_events import plotly_events
 
 st.set_page_config(layout="wide")
 
-@st.experimental_singleton
+@st.cache_resource
 def get_hazelcast_client(cluster_members=['127.0.0.1']):
     client = hazelcast.HazelcastClient(**{'cluster_members':cluster_members})
     #run Mapping required to run SQL Queries on JSON objects in predictionResult Map
@@ -46,7 +47,7 @@ def get_hazelcast_client(cluster_members=['127.0.0.1']):
             ).result()
     return client
 
-@st.experimental_memo
+@st.cache_data
 def get_df(_client, sql_statement, date_cols):
     #mapping hazelcast SQL Types to Pandas dtypes
     sql_to_df_types = {0:'category',6:'float32',8:'float32',5:'int32',7:'float32',4:'int32',1:'bool'}
@@ -84,43 +85,7 @@ def get_df(_client, sql_statement, date_cols):
     
     return df
 
-
-
-def get_line_chart_figure(cont_data,group_labels):
-
-    fig_cont = ff.create_distplot(cont_data, group_labels,
-                              show_hist=False,
-                              show_rug=False)
-    fig_cont.update_layout(height=300,
-            width=500,
-            margin={'l': 20, 'r': 20, 't': 0, 'b': 0},
-                legend=dict(
-                    yanchor="top",
-                    y=0.99,
-                    xanchor="right",
-                    x=0.99))
-    return fig_cont
-    
-def get_bar_chart_figure(cat1,cat_selected,id_col):
-    fig_cat = go.Figure(data=[
-        go.Bar(name='Potential Fraud=1',
-             x=cat1[cat_selected], 
-             y=cat1[id_col]
-    )])
-    fig_cat.update_layout(height=500,
-            width=500,
-            margin={'l': 20, 'r': 20, 't': 0, 'b': 0},
-            legend=dict(
-                yanchor="top",y=0.99,
-                xanchor="right",x=0.99),
-            barmode='stack',
-            modebar=dict(orientation="v"))
-    fig_cat.update_xaxes(title_text=cat_selected)
-    fig_cat.update_yaxes(title_text='# of transactions')
-
-    return fig_cat
-
-@st.cache
+@st.cache_data
 def get_dashboard_totals(fraud_probability_threshold):
     result = {}
     sql_statement = 'SELECT count(*) as total_records, sum(amount) as total_amount, avg(amount) as avg_amount, avg(distance_from_home) as avg_distance_km FROM predictionResult LIMIT 1'
@@ -149,18 +114,10 @@ def get_dashboard_totals(fraud_probability_threshold):
     
     return result
 
-@st.experimental_memo
-def get_categorical_variables(df):
-    categorical_features = list(df.select_dtypes(include='category').columns)
-    categorical_features.remove('__key')
-    categorical_features.remove('transaction_number')
+@st.cache_data
+def get_categorical_variables():
+    categorical_features =['customer_name','customer_city','customer_age_group','customer_gender']
     return categorical_features
-
-@st.experimental_memo
-def get_continous_variables():
-    continous_features = ['distance_from_home','amount','transaction_date_hour']
-    return continous_features
-
 
 #Connect to hazelcast - use env variable HZ_ONNX, if provided
 hazelcast_node = os.environ['HZ_ONNX']
@@ -168,18 +125,17 @@ if hazelcast_node:
     client = get_hazelcast_client([hazelcast_node])
 else:
     client = get_hazelcast_client()
-#retrieve data from hazelcast
-df2 = get_df(client,'select * from predictionResult LIMIT 100000',['transaction_date'])
-#get continuous & categorical variable names
-categorical_features = get_categorical_variables(df2)
-continuous_features = get_continous_variables()
+
+#get categorical variable names
+categorical_features = get_categorical_variables()
+
 
 #sidebar 
 st.sidebar.header('Fraud Probability Threshold')
 probability_threshold = st.sidebar.slider('Enter Threshold',0,100,70,1)
 st.sidebar.header('Key Dimensions','key dimensions')
-category_selected = st.sidebar.selectbox('Categorical Variables', categorical_features)
-continous_selected = st.sidebar.selectbox('Conntinuos Variables', continuous_features)
+category_selected = st.sidebar.selectbox('', categorical_features)
+
 
 #Continue Loading data
 fraud_threshold = probability_threshold / 100
@@ -217,25 +173,57 @@ st.header('Where is Potential Fraud Coming from?','key_dimensions')
 col_chart1, col_chart2 = st.columns(2)
 
 #Bubble Chart
-fig = px.scatter(df2, x="fraud_probability", y=continous_selected,
-	         size="fraud_probability", color=category_selected,
-                 hover_name="merchant", log_x=True, size_max = 40, width=500, height=500)
+sql_statement = """
+    select count(*) as total_transactions, avg(fraud_probability) as fraud_probability,
+        avg(distance_from_home) as distance_from_home,sum(amount) as total_amount,
+        {category_selected} 
+    from predictionResult 
+    where fraud_probability > {fraud_threshold} 
+    group by {category_selected}
+    order by fraud_probability DESC
+    limit 100
+    """.format(category_selected=category_selected,fraud_threshold=fraud_threshold)
+
+
+df_bubble = get_df(client,sql_statement=sql_statement,date_cols=[])
+
+fig = px.scatter(df_bubble, x="total_amount", y="total_transactions",
+	         size="total_amount", color=category_selected,
+                 hover_name="fraud_probability", log_x=True, size_max = 40, width=500, height=500)
 with col_chart1:
     st.subheader("Fraud Hotspots by " + category_selected )
-    st.plotly_chart(fig)
+    #st.plotly_chart(fig)
+    selected_points = plotly_events(fig,click_event=True,hover_event=False)
+    
 
-#bar chart - #add potential_fraud as dynamic column based on fraud probability threshold
-df2['suspected_fraud'] = df2.apply(lambda x: False if x['fraud_probability'] <= fraud_threshold else True, axis=1)
-df2_cat = df2.groupby([category_selected, 'suspected_fraud']).count()[['__key']].reset_index()
-df2_cat = df2_cat[df2_cat['__key'] > 0]
-df2_cat = df2_cat[df2_cat['suspected_fraud'] == True]
-df2_cat = df2_cat.sort_values(by=['__key'],ascending=False).head(20)
-fig2_cat = get_bar_chart_figure(df2_cat,category_selected,'__key')
+#MAP chart  - #Start by getting impacted from bubble chart
+categorical_impacted = df_bubble[category_selected].to_list()
+categorical_values= '\'' + '\',\''.join(categorical_impacted) + '\''
+
+# if user already chosen a bubble on chart
+total_amount_chosen = 0
+if (selected_points):
+    total_amount_chosen = selected_points[0]['x']
+    selected_value = df_bubble.loc[df_bubble['total_amount'] == total_amount_chosen ][category_selected].to_list()[0]
+    categorical_values = '\'' + selected_value + '\''
+
+#query for merchant lat/lon - filter to only most impacted values displayed in bubble chart
+sql_statement = """
+    select merchant_lat,merchant_lon
+    from predictionResult 
+    where fraud_probability > {fraud_threshold} and {category_selected} in ({categorical_values})
+    limit 1000
+    """.format(category_selected=category_selected,categorical_values=categorical_values,fraud_threshold=fraud_threshold)
+
+df_map = get_df(client,sql_statement=sql_statement,date_cols=[])
+df_map['lat'] = df_map['merchant_lat']
+df_map['lon'] = df_map['merchant_lon']
+df_map = df_map.drop(['merchant_lat','merchant_lon'],axis=1)
 
 with col_chart2:
-    st.subheader("Top 20 Impacted (" + category_selected + ")")
-    st.plotly_chart(fig2_cat)
-
+    st.subheader("Merchant Locations")
+    st.map(df_map)
+    
 #Analyst SQL Playground
 st.header('Analyst - SQL Playground','sql_playground')
 sql_statement = st.text_area('Enter a SQL Query', 'SELECT * \nFROM predictionResult \nLIMIT 100',200)
