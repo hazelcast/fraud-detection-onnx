@@ -1,14 +1,11 @@
 version: '3.4'
 services:
   hazelcast-onnx:
-    #image: fraud-detection-onnx-hazelcast-onnx
-    #image: docker.io/edsandovalhz/hazelcast-onnx
-    #image: docker.io/edsandovalhz/hz-onnx-awsecs
     image: docker.io/edsandovalhz/hz-onnx-all
     ports:
       - "5701:5701"
     environment:
-      # For deployment to docker running on local machine use
+      # For deployment to docker running containers on local machine
       - HAZELCAST_CONFIG=/opt/hazelcast/hazelcast.yml
     deploy:
       resources:
