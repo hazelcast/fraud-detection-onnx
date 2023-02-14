@@ -3,18 +3,18 @@ package org.example.client;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.HazelcastJsonValue;
-import com.hazelcast.internal.json.Json;
+
 import com.hazelcast.internal.json.JsonObject;
+
 import com.hazelcast.jet.datamodel.Tuple2;
 import com.hazelcast.jet.datamodel.Tuple3;
 import com.hazelcast.jet.datamodel.Tuple4;
 import com.hazelcast.jet.kafka.KafkaSources;
-import com.hazelcast.jet.pipeline.Pipeline;
-import com.hazelcast.jet.pipeline.ServiceFactories;
-import com.hazelcast.jet.pipeline.ServiceFactory;
-import com.hazelcast.jet.pipeline.Sinks;
-import com.hazelcast.nio.serialization.genericrecord.GenericRecord;
+import com.hazelcast.jet.pipeline.*;
+
 import com.hazelcast.org.json.JSONObject;
+import org.example.datamodel.Customer;
+import org.example.datamodel.Merchant;
 import org.example.fraudmodel.FraudDetectionRequest;
 import org.example.fraudmodel.FraudDetectionResponse;
 import org.example.fraudmodel.LightGBMFraudDetectorService;
@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap;
 import java.util.Map;
-import java.util.Random;
 
 import static org.example.client.LoadOnlineFeatures.loadOnlineFeatures;
 import static org.example.util.Util.BASE_DIR;
@@ -37,7 +36,6 @@ public class DeployFraudDetectionInference {
     public static void main(String[] args) throws InterruptedException {
 
         Map<String, String> env = System.getenv();
-        //arg[0] must be onnxFilename (e.g "fraudmodel-1.0.onnx")
         String onnxModelFileName = args[0];
         String HZ_ONNX = env.get("HZ_ONNX");
         String KAFKA_CLUSTER_KEY = env.get("KAFKA_CLUSTER_KEY");
@@ -53,13 +51,13 @@ public class DeployFraudDetectionInference {
             loadOnlineFeatures(client);
         }
 
-        submitFraudDetectionInferencePipeline(client,KAFKA_CLUSTER_ENDPOINT,
-                onnxModelFileName,KAFKA_CLUSTER_KEY,KAFKA_CLUSTER_SECRET);
         Thread.sleep(2000);
+        submitFraudDetectionInferencePipeline(client,KAFKA_CLUSTER_ENDPOINT,onnxModelFileName,KAFKA_CLUSTER_KEY,KAFKA_CLUSTER_SECRET);
         client.shutdown();
     }
 
     private static void submitFraudDetectionInferencePipeline(HazelcastInstance client,String kafkaBroker,String onnxModelFileName,String kafkaKey, String kafkaSecret) throws InterruptedException {
+
 
         // Set up ONNX Fraud Detection Model as a Service in the transaction processing pipeline
         ServiceFactory<?, LightGBMFraudDetectorService> fraudCheckingService = ServiceFactories
@@ -69,57 +67,60 @@ public class DeployFraudDetectionInference {
         Pipeline p = Pipeline.create();
 
         p.readFrom(KafkaSources.kafka(
-                        Util.kafkaConsumerProps(kafkaBroker, kafkaKey,kafkaSecret),
-                        cr -> new AbstractMap.SimpleEntry<>(cr.key().toString(),new JSONObject(cr.value().toString()).put("start_time_nano",System.nanoTime())),
+                        Util.kafkaConsumerProps(kafkaBroker, kafkaKey, kafkaSecret),
+                        cr -> new AbstractMap.SimpleEntry<>(cr.key().toString(), new JSONObject(cr.value().toString()).put("start_time_nano", System.nanoTime())),
                         KAFKA_TOPIC))
                 .withNativeTimestamps(0)
                 .setLocalParallelism(10)
                 //retrieve Merchant Features
                 .mapUsingIMap(Util.MERCHANT_MAP,
                         tup -> tup.getValue().getString("merchant"),
-                        (tup,merchant)-> Tuple2.tuple2(
+                        (tup, merchant) -> Tuple2.tuple2(
                                 tup.getValue(),
-                                Util.getMerchantFrom((GenericRecord) merchant)))
+                                merchant))
+
                 //retrieve Customer Features
                 .mapUsingIMap(Util.CUSTOMER_MAP,
                         tup -> tup.f0().getLong("cc_num"),
-                        (tup,customer)-> Tuple3.tuple3(tup.f0(),tup.f1(),
-                                Util.getCustomerFrom((GenericRecord) customer)))
-                //Calculate Realtime Feature "Distance from Home"
+                        (tup, customer) -> Tuple3.tuple3(tup.f0(), tup.f1(), customer))
+
+                .filter(tup -> tup.f2()!=null)
                 .map (tup -> {
-                    double distanceKms = Util.calculateDistanceKms(
-                            tup.f0().getDouble("merch_lat"),
-                            tup.f0().getDouble("merch_long"),
-                            tup.f2().getLatitude().doubleValue(),
-                            tup.f2().getLongitude().doubleValue());
-                    return Tuple4.tuple4(tup.f0(),tup.f1(),tup.f2(),distanceKms);})
+                    double merchantLat = tup.f0().getDouble("merch_lat");
+                    double merchantLong = tup.f0().getDouble("merch_long");
+                    double customerLat =  ((Customer) tup.f2()).getLatitude().doubleValue();
+                    double customerLong = ((Customer) tup.f2()).getLongitude().doubleValue();
+
+                    double distanceKms = Util.calculateDistanceKms(merchantLat,merchantLong,customerLat, customerLong);
+                    return Tuple4.tuple4(tup.f0(),tup.f1(),tup.f2(),distanceKms);
+                })
                 .map(tup -> {
                     FraudDetectionRequest fdr = Util.createFrom(
                             tup.f0(),
-                            tup.f2(),
-                            tup.f1(),
+                            (Customer) tup.f2(),
+                            (Merchant) tup.f1(),
                             tup.f3());
                     return Tuple4.tuple4(tup.f0(),tup.f1(),tup.f2(),fdr);
                 })
                 // Pre-processing Categorical Features - Merchant Category
                 .mapUsingIMap(Util.MERCHANT_MAP,
-                        tup -> tup.f1().getMerchant_name(),
+                        tup -> ((Merchant) tup.f1()).getMerchant_name(),
                         (tup , gr)-> {
                             FraudDetectionRequest fdr = tup.f3();
-                            GenericRecord merchant = (GenericRecord) gr;
-                            fdr.setMerchant((int) merchant.getInt64("merchantCode"));
+                            Merchant merchant = (Merchant) gr;
+                            fdr.setMerchant((int) merchant.getMerchantCode().intValue());
                             return Tuple3.tuple3(tup.f0(),tup.f2(),fdr);
                         })
                 //Pre-processing Categorical Features - Gender
                 .mapUsingIMap(Util.GENDER_MAP,
-                        tup -> tup.f1().getGender(),
+                        tup -> ((Customer) tup.f1()).getGender(),
                         (tup , code)-> {
                             FraudDetectionRequest fdr = tup.f2();
                             fdr.setGender((int) code);
                             return Tuple3.tuple3(tup.f0(),tup.f1(),fdr);
                         })
                 .mapUsingIMap(Util.JOB_MAP,
-                        tup -> tup.f1().getJob(),
+                        tup -> ((Customer) tup.f1()).getJob(),
                         (tup , code)-> {
                             FraudDetectionRequest fdr = tup.f2();
                             fdr.setJob((int) code);
@@ -127,7 +128,7 @@ public class DeployFraudDetectionInference {
                         })
                 //Pre-processing Categorical Features - Age Group
                 .mapUsingIMap(Util.AGE_GROUP_MAP,
-                        tup -> tup.f1().getAge_group(),
+                        tup -> ((Customer) tup.f1()).getAge_group(),
                         (tup , code)-> {
                             FraudDetectionRequest fdr = tup.f2();
                             fdr.setAge_group((int) code);
@@ -135,7 +136,7 @@ public class DeployFraudDetectionInference {
                         })
                 //Pre-processing Categorical Features - Customer Setting (Rural or Urban)
                 .mapUsingIMap(Util.SETTING_MAP,
-                        tup -> tup.f1().getSetting(),
+                        tup -> ((Customer) tup.f1()).getSetting(),
                         (tup , code)-> {
                             FraudDetectionRequest fdr = tup.f2();
                             fdr.setSetting((int) code);
@@ -143,7 +144,7 @@ public class DeployFraudDetectionInference {
                         })
                 //Pre-processing Categorical Features - ZipCode
                 .mapUsingIMap(Util.ZIP_MAP,
-                        tup -> tup.f1().getZip(),
+                        tup -> ((Customer) tup.f1()).getZip(),
                         (tup , code)-> {
                             FraudDetectionRequest fdr = tup.f2();
                             fdr.setZip((int) code);
@@ -179,6 +180,7 @@ public class DeployFraudDetectionInference {
                     FraudDetectionResponse prediction =  service.getFraudProbability(tup.f2());
                     return Tuple4.tuple4(tup.f0(),tup.f1(),tup.f2(),prediction);
                 })
+
                 .map(tup -> {
                     JsonObject jsonObject = new JsonObject()
                             .add("transaction_number", tup.f0().getString("trans_num"))
@@ -189,12 +191,12 @@ public class DeployFraudDetectionInference {
                             .add("merchant_lat", tup.f0().getDouble("merch_lat"))
                             .add("merchant_lon", tup.f0().getDouble("merch_long"))
                             .add("credit_card_number", tup.f0().getLong("cc_num"))
-                            .add("customer_name", tup.f1().getFirst() + " " + tup.f1().getLast())
-                            .add("customer_city", tup.f1().getCity())
-                            .add("customer_age_group", tup.f1().getAge_group())
-                            .add("customer_gender", tup.f1().getGender())
-                            .add("customer_lat", tup.f1().getLatitude())
-                            .add("customer_lon", tup.f1().getLongitude())
+                            .add("customer_name", ((Customer)tup.f1()).getFirst() + " " + ((Customer)tup.f1()).getLast())
+                            .add("customer_city", ((Customer)tup.f1()).getCity())
+                            .add("customer_age_group", ((Customer)tup.f1()).getAge_group())
+                            .add("customer_gender", ((Customer)tup.f1()).getGender())
+                            .add("customer_lat", ((Customer)tup.f1()).getLatitude())
+                            .add("customer_lon", ((Customer)tup.f1()).getLongitude())
                             .add("distance_from_home",tup.f2().getDistance_from_home())
                             .add("transaction_weekday_code",tup.f2().getTransaction_weekday())
                             .add("transaction_hour_code",tup.f2().getTransaction_hour())
@@ -213,9 +215,6 @@ public class DeployFraudDetectionInference {
 
         Util.submitJob(p, client, SCORING_JOB_NAME);
 
-
     }
-
-
 
 }

@@ -64,7 +64,7 @@ hazelcast:
       # This technique doesn't attempt any auto-discovery, you directly list all
       # the candidate IPs to check.
       tcp-ip:
-        enabled: true
+        enabled: false
         member-list:
           - hazelcast-onnx:5701
 
@@ -85,7 +85,11 @@ hazelcast:
       # Specifies whether the member use the Kubernetes APIs to get a list of candidate IPs to
       # check.
       kubernetes:
-        enabled: false
+        enabled: true
+        namespace: default
+        expose-externally: false
+        service-per-pod-label-name: com.hazelcast/external-access
+        service-per-pod-label-value: true
       eureka:
         enabled: false
         # Specifies if the Eureka Discovery SPI plugin will register itself

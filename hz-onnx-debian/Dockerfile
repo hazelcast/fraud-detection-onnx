@@ -62,6 +62,11 @@ COPY ./libonnxruntime4j_jni.so /opt/hazelcast/lib/libonnxruntime4j_jni.so
 
 #Hazelcast config file - with config for the Fraud Scoring Example
 COPY ./hazelcast.yml /opt/hazelcast/
+COPY ./hazelcast-aws.yml /opt/hazelcast/
+COPY ./hazelcast-k8.yml /opt/hazelcast/
+
+#place Merchant Portable Serialization classes to member classpath
+COPY ./feature-data-loader-1.0-SNAPSHOT.jar /opt/hazelcast/
 
 # Default Runtime variables
 ENV HZ_HOME="${HZ_HOME}" \

@@ -64,7 +64,7 @@ hazelcast:
       # This technique doesn't attempt any auto-discovery, you directly list all
       # the candidate IPs to check.
       tcp-ip:
-        enabled: true
+        enabled: false
         member-list:
           - hazelcast-onnx:5701
 
@@ -73,7 +73,7 @@ hazelcast:
       # the API and the rest of the parameters work as filtering criteria that
       # narrow down the list of IPs to check.
       aws:
-        enabled: false
+        enabled: true
       # Specifies whether the member use the GCP APIs to get a list of candidate IPs to
       # check.
       gcp:

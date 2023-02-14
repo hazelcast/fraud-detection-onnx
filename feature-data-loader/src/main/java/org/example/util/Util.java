@@ -8,12 +8,16 @@ import com.hazelcast.jet.config.JobConfig;
 import com.hazelcast.jet.pipeline.Pipeline;
 import com.hazelcast.map.IMap;
 import com.hazelcast.nio.serialization.genericrecord.GenericRecord;
+import com.hazelcast.nio.serialization.genericrecord.GenericRecordBuilder;
 import com.hazelcast.org.json.JSONObject;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.example.client.DeployFraudDetectionInference;
 import org.example.client.LoadOnlineFeatures;
 import org.example.datamodel.Customer;
+import org.example.datamodel.CustomerFactory;
 import org.example.datamodel.Merchant;
+import org.example.datamodel.MerchantFactory;
 import org.example.fraudmodel.*;
 
 import java.io.IOException;
@@ -57,6 +61,10 @@ public class Util {
         clientConfig.setClusterName("dev");
         clientConfig.getNetworkConfig().addAddress(hazelcastClusterMemberAddresses);
 
+        //portable serialization - 02.01.23
+        clientConfig.getSerializationConfig().addPortableFactory(1, new MerchantFactory());
+        clientConfig.getSerializationConfig().addPortableFactory(2, new CustomerFactory());
+
         //Start the client
         HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
         System.out.println("Connected to Hazelcast Cluster");
@@ -94,6 +102,7 @@ public class Util {
         merchant.setCategory(genericRecord.getString("category"));
         return merchant;
     }
+
     public static void submitJob (Pipeline p, HazelcastInstance client, String jobName)  {
         JobConfig jobCfg = new JobConfig().setName(jobName);
         jobCfg.addClass(Merchant.class);
@@ -136,11 +145,14 @@ public class Util {
 
         //Cloud
         props.setProperty("security.protocol","SASL_SSL");
+        //props.setProperty("security.protocol","SSL");
         props.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username='" + kafkaKey  + "' password='" + kafkaSecret  +"';");
         props.setProperty("sasl.mechanism","PLAIN");
-        props.setProperty("session.timeout.ms","45000");
+        props.setProperty("session.timeout.ms","60000");
         props.setProperty("client.dns.lookup","use_all_dns_ips");
-        props.setProperty("acks","all");
+        //props.setProperty("acks","all");
+
+
         return props;
     }
 
@@ -152,7 +164,7 @@ public class Util {
         FraudDetectionRequest fraudDetectionRequest = new FraudDetectionRequest();
         fraudDetectionRequest.setAmt(incomingTransaction.getFloat("amt"));
         fraudDetectionRequest.setCity_pop((float) c.getCity_pop());
-        fraudDetectionRequest.setMerchant(m.getMerchantCode().intValue());
+        fraudDetectionRequest.setMerchant((int)m.getMerchantCode().intValue());
         fraudDetectionRequest.setCc_num(c.getCode().intValue());
         fraudDetectionRequest.setAge(c.getAge());
         fraudDetectionRequest.setDistance_from_home(distanceKms.floatValue());
