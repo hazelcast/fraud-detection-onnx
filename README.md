@@ -93,7 +93,7 @@ docker context use myecscontext
 Now that you've switched to your `myecscontext`, `docker compose` will deploy to AWS ECS.
 
 ```
-docker compose up
+docker compose -f docker-compose-awsecs.yml up
 ```
 This will take 5-10 minutes to complete
 
@@ -119,21 +119,43 @@ If your `HZ_ONNX` is `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.a
 * Your `management-center` will be accessible on `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8080`
 * Your `fraud-dashboard` will be on  `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.amazonaws.com:8501`
 
-# Load Feature data and Fraud Detection Inference Jobs into Hazelcast
 
-These Feature data jobs will simply load the Customer & Features from JSON and CSV files into [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) 
+# Load some transactions into Kafka
 
-Once these jobs are executed, the fraud inference pipeline will also be deployed. 
+Next, You will load 100k transactions into Kafka. This will trigger the Fraud Detection Pipeline submitted in the previous section. 
 
-First, go into the feature-data-loader folder
+Note that the transactions are preloaded as CSV files in your `hazelcast-onnx` container.
+
+```
+cd transaction-loader 
+```
+
+Followed by 
+```
+hz-cli submit -v -t $HZ_ONNX -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar 100k-transactions.csv
+```
+
+You should see a "Transaction Loader Job" success message in the output
+
+![Transaction loader success message ](./images/transaction-loader-success.png)
+
+
+
+# Feature data loading and Fraud Detection Inference Jobs into Hazelcast
+
+With the transactions ready to process in Kafka, we now turn to populate Customer and Merchant data needed to make predictions.
+A number of feature data loading jobs will populate several [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) with data about Customer & Merchant
+
+Once these jobs are executed, the fraud inference pipeline will deployed.
+
+To launch these jobs, go into the feature-data-loader folder
 ```
 cd ../feature-data-loader
 ```
 
 and run
 ```
-hz-cli submit -v -t $HZ_ONNX \
-     -c org.example.client.DeployFraudDetectionInference \
+hz-cli submit -v -t $HZ_ONNX -c org.example.client.DeployFraudDetectionInference \
     target/feature-data-loader-1.0-SNAPSHOT.jar lightgbm_fraud_detection_onnx
 ```
 
@@ -159,28 +181,6 @@ In a real-world scenario, the end of the inference pipeline is typically the sta
 * Trigger automatic alerts to ML-Ops team warning about model/data drift.
 * Update Customer "online features" such as `"last known coordinates"`, `"last transaction amount"`. `"amount spent in the last 24 hours"`, `"number/value of transactions attempted in the last X minutes/days"`
 
-
-
-# Load some transactions into Kafka
-
-Next, You will load 100k transactions into Kafka. This will trigger the Fraud Detection Pipeline submitted in the previous section. 
-
-Note that the transactions are preloaded as CSV files in your `hazelcast-onnx` container.
-
-```
-cd transaction-loader 
-```
-
-Followed by 
-```
-hz-cli submit -v -t $HZ_ONNX -c org.example.Main target/transaction-loader-1.0-SNAPSHOT.jar 100k-transactions.csv
-```
-
-You should see a "Transaction Loader Job" success message in the output
-
-![Transaction loader success message ](./images/transaction-loader-success.png)
-
-As the transactions load into Kafka, they will trigger the Fraud Detection Inference Pipeline
 
 # Monitoring in Hazelcast
 
@@ -228,6 +228,35 @@ docker-compose -f build-hz-onnx-image.yml build
 docker tag fraud-detection-onnx-hazelcast-onnx-debian <your-github-username>/<image-name>
 docker push <your-github-username>/<image-name> 
 ```
+
+
+
+## (Optional) Deploy to your local desktop
+With a powerful desktop/laptop, you may want to try running the demo locally.
+
+
+First, ensure your docker compose will deploy to your local machine
+```
+docker context use default
+```
+Next, update your `HZ_ONNX` environment variable to point to your local IP address & Hazelcast port
+```
+export HZ_ONNX=192.0.68.1:5701
+```
+
+Next, launch the Hazelcast-onnx, management center and fraud dashboard containers with
+```
+docker compose -f docker-compose.yml up -d
+```
+
+From here, you can deploy the feature loading jobs and fraud detection pipeline
+```
+hz-cli submit -v -t $HZ_ONNX -c org.example.client.DeployFraudDetectionInference \
+    target/feature-data-loader-1.0-SNAPSHOT.jar lightgbm_fraud_detection_onnx
+```
+
+
+
 
 ## (Optional) Train the model and convert it to ONNX
 

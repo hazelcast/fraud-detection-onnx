@@ -10,8 +10,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '8'
-          memory: 16Gb
+          cpus: '4'
+          memory: '8GB'
   
   fraud-dashboard:
     image: docker.io/edsandovalhz/fraud-dashboard
@@ -31,5 +31,5 @@ services:
       resources:
         limits:
           cpus: '4'
-          memory: 4Gb
+          memory: '8GB'
   
