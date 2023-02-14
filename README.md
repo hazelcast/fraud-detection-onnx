@@ -230,9 +230,10 @@ docker push <your-github-username>/<image-name>
 ```
 
 
-
 ## (Optional) Deploy to your local desktop
 With a powerful desktop/laptop, you may want to try running the demo locally.
+NOTE: The instructions below were tested on an M1-powered MacBookPro with 16GB Memory & 10-core CPU.
+The demo workload will exercise the desktop while loading/processing transactions. 
 
 
 First, ensure your docker compose will deploy to your local machine
@@ -251,11 +252,16 @@ docker compose -f docker-compose.yml up -d
 
 From here, you can deploy the feature loading jobs and fraud detection pipeline
 ```
+cd feature-data-loader/
 hz-cli submit -v -t $HZ_ONNX -c org.example.client.DeployFraudDetectionInference \
     target/feature-data-loader-1.0-SNAPSHOT.jar lightgbm_fraud_detection_onnx
 ```
 
+NOTE: You may find that running on an M1 (or ARM-powered) devices, the Hazelcast-onnx container is occasionally unstable. This is due to the fact that the container image was built for the AMD platform. It does run on ARM-powered devices via emulation. Docker explicitely warns that this may impact and instability
 
+The image was built for AMD as due to a limitation of  ONNX Runtime (it doesn't support Java on ARM-based devices yet)
+
+If your hazelcast image becomes unresponsive, simply `docker compose down` and `docker compose -f docker-compose.yml up -d`!
 
 
 ## (Optional) Train the model and convert it to ONNX
