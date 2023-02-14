@@ -8,13 +8,13 @@ services:
     ports:
       - "5701:5701"
     environment:
-      # For deployment to docker running on local machine use
-      - HAZELCAST_CONFIG=/opt/hazelcast/hazelcast.yml
+      # For deployment to AWS ECS (via docker compose)
+      - HAZELCAST_CONFIG=/opt/hazelcast/hazelcast-aws.yml
     deploy:
       resources:
         limits:
-          cpus: '4'
-          memory: 4Gb
+          cpus: '8'
+          memory: 16Gb
   
   fraud-dashboard:
     image: docker.io/edsandovalhz/fraud-dashboard
@@ -33,6 +33,6 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: '4'
           memory: 4Gb
   
