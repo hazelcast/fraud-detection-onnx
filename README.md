@@ -143,7 +143,7 @@ You should see a "Transaction Loader Job" success message in the output
 
 # Feature data loading and Fraud Detection Inference Jobs into Hazelcast
 
-With the transactions ready to process in Kafka, we now turn to populate Customer and Merchant data needed to make predictions.
+With the transactions ready to process in Kafka, we now turn to populate Customer and Merchant feature data needed to make fraud predictions.
 A number of feature data loading jobs will populate several [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) with data about Customer & Merchant
 
 Once these jobs are executed, the fraud inference pipeline will deployed.
@@ -231,7 +231,8 @@ docker push <your-github-username>/<image-name>
 
 
 ## (Optional) Deploy to your local desktop
-With a powerful desktop/laptop, you may want to try running the demo locally.
+With a powerful desktop/laptop, you may want to run the demo locally.
+
 NOTE: The instructions below were tested on an M1-powered MacBookPro with 16GB Memory & 10-core CPU.
 The demo workload will exercise the desktop while loading/processing transactions. 
 
@@ -257,7 +258,7 @@ hz-cli submit -v -t $HZ_ONNX -c org.example.client.DeployFraudDetectionInference
     target/feature-data-loader-1.0-SNAPSHOT.jar lightgbm_fraud_detection_onnx
 ```
 
-NOTE: You may find that running on an M1 (or ARM-powered) devices, the Hazelcast-onnx container is occasionally unstable. This is due to the fact that the container image was built for the AMD platform. It does run on ARM-powered devices via emulation. Docker explicitely warns that this may impact and instability
+NOTE: You may find that running on an M1 (or ARM-powered) device, the Hazelcast-onnx container is occasionally unstable. This is due to the fact that the container image was built for the AMD platform. It does run on ARM-powered devices via emulation. Docker explicitely warns that this may impact and instability
 
 The image was built for AMD as due to a limitation of  ONNX Runtime (it doesn't support Java on ARM-based devices yet)
 
@@ -266,4 +267,30 @@ If your hazelcast image becomes unresponsive, simply `docker compose down` and `
 
 ## (Optional) Train the model and convert it to ONNX
 
-To-Do
+You can generate the ONNX model used in this demo by:
+* Retrieving the training data
+* Train the model a Jupyter Notebook with Python 3.8 and LightGBM
+* Convert the model to ONNX format
+
+### Download the training data
+
+```
+cd model-training
+```
+Download the ["transaction.csv"](https://hz-fraud-demo-training-data.s3.us-east-2.amazonaws.com/transactions.csv) into this folder
+
+### Start up  your Jypyter notebook
+Assuming you have `conda` installed, create a python environment with all of the dependencies
+
+```
+conda env create -f environment.yml
+```
+
+### Fire up your Notebook
+```
+jupyter lab
+```
+open the  [Model Training.ipynb](./model-training/Model%20Training.ipynb) Notebook
+
+The notebook covers the model training (lightGBM) and transformation to ONNX
+
