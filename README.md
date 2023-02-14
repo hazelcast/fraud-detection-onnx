@@ -73,7 +73,7 @@ We've built a docker image preloaded with:
 * Some sample Transaction data (in csv files) for testing purposes
 
 This image will run on ARM devices, like an Apple M1-powered device, via emulation. 
-However, the performance and stability is negatively impacted when running in emulation mode
+However, the performance and stability are negatively impacted when running in emulation mode
 
 ## The  Fraud Analytics Dashboard
 This docker image bundles a custom Streamlit app that connects automatically to the `hazelcast-onnx` container. 
