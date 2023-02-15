@@ -15,4 +15,5 @@ feature-data-loader/target/classes/org/example/Main.class
 **/model-training/transaction_data_stream.csv
 **/model-training/transactions.csv
 **/model-training/lightgbm_fraud_detection_onnx
+**/model-training/*.json
 
