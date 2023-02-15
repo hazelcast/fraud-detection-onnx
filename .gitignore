@@ -11,3 +11,8 @@
 **/feature-data-loader/target/maven-archiver/
 **/feature-data-loader/target/classes/
 feature-data-loader/target/classes/org/example/Main.class
+**/model-training/.ipynb_checkpoints/
+**/model-training/transaction_data_stream.csv
+**/model-training/transactions.csv
+**/model-training/lightgbm_fraud_detection_onnx
+
