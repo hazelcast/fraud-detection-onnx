@@ -276,12 +276,10 @@ You can generate the ONNX model used in this demo by:
 
 ```
 cd model-training
+wget https://hz-fraud-demo-training-data.s3.us-east-2.amazonaws.com/transactions.csv
 ```
-Download the ["transaction.csv"](https://hz-fraud-demo-training-data.s3.us-east-2.amazonaws.com/transactions.csv) into this folder
-
 ### Set up Jupyter environment
 Assuming you have `conda` installed, create a python environment with all of the dependencies
-
 ```
 conda create --name hz-onnx python=3.8
 pip3 install --upgrade pip
@@ -289,11 +287,11 @@ pip3 install -r requirements.txt
 conda activate hz-onnx
 ```
 
-### Fire up your Notebook
+### Fire up your Jupyter Notebook
 ```
 jupyter notebook
 ```
 open the  [Model Training.ipynb](./model-training/Model%20Training.ipynb) Notebook
 
-The notebook covers the model training (lightGBM) and transformation to ONNX
+The notebook has extensive notes explaining how the model was trained using LightGBM and how it was coverted to ONNX
 
