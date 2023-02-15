@@ -1,0 +1,8 @@
+skl2onnx==1.13
+onnxmltools==1.11.0
+onnxconverter-common==1.13.0
+scipy==1.10.0
+pandas==1.4.4
+jupyter==1.0.0
+lightgbm==3.3.5
+onnxruntime==1.12.1
