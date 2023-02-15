@@ -60,7 +60,7 @@ Make sure you name your Topic "Transactions". It is important!
 
 # Deploy Hazelcast-Onnx, Management Center and Fraud Analytics Dashboard to AWS ECS
 
-In this demo, you will spin up 3 containers in AWS ECS:
+You will spin up 3 containers in AWS ECS:
 * A single-node Hazelcast cluster
 * A Hazelcast Management Center instance
 * A custom Fraud Analytics dashboard 
@@ -267,7 +267,7 @@ If your hazelcast image becomes unresponsive, simply `docker compose down` and `
 
 ## (Optional) Train the model and convert it to ONNX
 
-You can generate the ONNX model using in this demo by following the steps below:
+You can generate the ONNX model used in this demo by following the steps below:
 * Download the transaction data used to train the model 
 * Train the model a Jupyter Notebook with Python 3.8 and LightGBM
 * Convert the model to ONNX format
