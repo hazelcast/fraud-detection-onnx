@@ -279,16 +279,19 @@ cd model-training
 ```
 Download the ["transaction.csv"](https://hz-fraud-demo-training-data.s3.us-east-2.amazonaws.com/transactions.csv) into this folder
 
-### Start up  your Jypyter notebook
+### Set up Jupyter environment
 Assuming you have `conda` installed, create a python environment with all of the dependencies
 
 ```
-conda env create -f environment.yml
+conda create --name hz-onnx python=3.8
+pip3 install --upgrade pip
+pip3 install -r requirements.txt
+conda activate hz-onnx
 ```
 
 ### Fire up your Notebook
 ```
-jupyter lab
+jupyter notebook
 ```
 open the  [Model Training.ipynb](./model-training/Model%20Training.ipynb) Notebook
 
