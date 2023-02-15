@@ -267,8 +267,8 @@ If your hazelcast image becomes unresponsive, simply `docker compose down` and `
 
 ## (Optional) Train the model and convert it to ONNX
 
-You can generate the ONNX model used in this demo by:
-* Retrieving the training data
+You can generate the ONNX model using in this demo by following the steps below:
+* Download the transaction data used to train the model 
 * Train the model a Jupyter Notebook with Python 3.8 and LightGBM
 * Convert the model to ONNX format
 
@@ -295,3 +295,4 @@ open the  [Model Training.ipynb](./model-training/Model%20Training.ipynb) Notebo
 
 The notebook has extensive notes explaining how the model was trained using LightGBM and how it was coverted to ONNX
 
+You may also want to look at the [Java class wrapping the ONNX model](./feature-data-loader/src/main/java/org/example/fraudmodel/LightGBMFraudDetectorService.java). This class shows the code to intialize the ONNX Runtime envrionment, load the ONNX model and get a prediction from it
