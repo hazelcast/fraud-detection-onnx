@@ -141,7 +141,7 @@ You should see a "Transaction Loader Job" success message in the output
 
 
 
-# Feature data loading and Fraud Detection Inference Jobs into Hazelcast
+# Feature Data Loading and Fraud Detection Inference Jobs
 
 With the transactions ready to process in Kafka, we now turn to populate Customer and Merchant feature data needed to make fraud predictions.
 A number of feature data loading jobs will populate several [Hazelcast Maps](https://docs.hazelcast.com/hazelcast/5.2/data-structures/map) with data about Customer & Merchant
