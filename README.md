@@ -216,20 +216,6 @@ This will prevent future `docker compose` inadvertedly deploying to AWS ECS!
 docker context use default
 ```
 
-
-## (Optional) Building Your own hazelcast-onnx image
-If you want to create your own hazelcast-onnx image and preload it with your data and model, you can check the [`Dockerfile`](./hz-onnx-debian/Dockerfile) under the  `hz-onnx-debian` folder.
-
-Once you are happy with your updates to `Dockerfile`, you can create and publish your image by running 
-
-```
-cd ..
-docker-compose -f build-hz-onnx-image.yml build
-docker tag fraud-detection-onnx-hazelcast-onnx-debian <your-github-username>/<image-name>
-docker push <your-github-username>/<image-name> 
-```
-
-
 ## (Optional) Deploy to your local desktop
 With a powerful desktop/laptop, you may want to run the demo locally.
 
@@ -282,9 +268,9 @@ wget https://hz-fraud-demo-training-data.s3.us-east-2.amazonaws.com/transactions
 Assuming you have `conda` installed, create a python environment with all of the dependencies
 ```
 conda create --name hz-onnx python=3.8
+conda activate hz-onnx
 pip3 install --upgrade pip
 pip3 install -r requirements.txt
-conda activate hz-onnx
 ```
 
 ### Fire up your Jupyter Notebook
@@ -296,3 +282,17 @@ open the  [Model Training.ipynb](./model-training/Model%20Training.ipynb) Notebo
 The notebook has extensive notes explaining how the model was trained using LightGBM and how it was coverted to ONNX
 
 You may also want to look at the [Java class wrapping the ONNX model](./feature-data-loader/src/main/java/org/example/fraudmodel/LightGBMFraudDetectorService.java). This class shows the code to intialize the ONNX Runtime envrionment, load the ONNX model and get a prediction from it
+
+
+## (Optional) Building Your own hazelcast-onnx image
+If you want to create your own hazelcast-onnx image and preload it with your data and model, you can check the [`Dockerfile`](./hz-onnx-debian/Dockerfile) under the  `hz-onnx-debian` folder.
+
+Once you are happy with your updates to `Dockerfile`, you can create and publish your image by running 
+
+```
+cd ..
+docker-compose -f build-hz-onnx-image.yml build
+docker tag fraud-detection-onnx-hazelcast-onnx-debian <your-github-username>/<image-name>
+docker push <your-github-username>/<image-name> 
+```
+
