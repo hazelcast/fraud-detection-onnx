@@ -86,7 +86,7 @@ The app:
 
 Create a docker "Context" to deploy a `docker compose` file to AWS ECS
 ```
-docker context create myecscontext
+docker context create ecs myecscontext
 docker context use myecscontext
 ```
 
