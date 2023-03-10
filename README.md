@@ -122,7 +122,7 @@ If your `HZ_ONNX` is `ecsde-LoadB-1NHRSHPTW92BJ-7b72b00b647ecd29.elb.us-east-2.a
 
 # Load some transactions into Kafka
 
-Next, You will load 100k transactions into Kafka. This will trigger the Fraud Detection Pipeline submitted in the previous section. 
+Next, You will load 100k transactions into Kafka.
 
 Note that the transactions are preloaded as CSV files in your `hazelcast-onnx` container.
 
@@ -171,15 +171,15 @@ At a high-level, the Fraud Detection inference pipeline executes the following s
 * Calculate real-time features such as "distance from home" (distance from transaction Geolocation and the Customer's billing address).
 * Perform Feature engineering required to convert Customer and Merchant features into numeric values required by the Fraud Detection model
 * Run the Fraud Detection model to obtain a fraud probability for each transaction
-* Store prediction results (in JSON format) as Hazelcast maps for further analysis
+* Store prediction results (in JSON format) in a Hazelcast Map
 
 
 ## Production Ideas
 In a real-world scenario, the end of the inference pipeline is typically the start of other pipelines. For example, you could create pipelines to:
 
-* Trigger automatic customer validation request for potentially fraudulent transactions
 * Trigger automatic alerts to ML-Ops team warning about model/data drift.
 * Update Customer "online features" such as `"last known coordinates"`, `"last transaction amount"`. `"amount spent in the last 24 hours"`, `"number/value of transactions attempted in the last X minutes/days"`
+* Run Explainability tools and store their output
 
 
 # Monitoring in Hazelcast
