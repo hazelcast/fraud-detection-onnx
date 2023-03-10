@@ -85,6 +85,7 @@ public class DeployFraudDetectionInference {
                         (tup, customer) -> Tuple3.tuple3(tup.f0(), tup.f1(), customer))
 
                 .filter(tup -> tup.f2()!=null)
+                // Calculate "Distance from Home" in Real-Time
                 .map (tup -> {
                     double merchantLat = tup.f0().getDouble("merch_lat");
                     double merchantLong = tup.f0().getDouble("merch_long");
