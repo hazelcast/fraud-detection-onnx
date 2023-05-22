@@ -8,19 +8,16 @@ import com.hazelcast.jet.config.JobConfig;
 import com.hazelcast.jet.pipeline.Pipeline;
 import com.hazelcast.map.IMap;
 import com.hazelcast.nio.serialization.genericrecord.GenericRecord;
-import com.hazelcast.nio.serialization.genericrecord.GenericRecordBuilder;
 import com.hazelcast.org.json.JSONObject;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.example.client.DeployFraudDetectionInference;
 import org.example.client.LoadOnlineFeatures;
 import org.example.datamodel.Customer;
-import org.example.datamodel.CustomerFactory;
+import org.example.datamodel.CustomerSerializer;
 import org.example.datamodel.Merchant;
-import org.example.datamodel.MerchantFactory;
+import org.example.datamodel.MerchantSerializer;
 import org.example.fraudmodel.*;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class Util {
@@ -61,9 +58,9 @@ public class Util {
         clientConfig.setClusterName("dev");
         clientConfig.getNetworkConfig().addAddress(hazelcastClusterMemberAddresses);
 
-        //portable serialization - 02.01.23
-        clientConfig.getSerializationConfig().addPortableFactory(1, new MerchantFactory());
-        clientConfig.getSerializationConfig().addPortableFactory(2, new CustomerFactory());
+        clientConfig.getSerializationConfig().getCompactSerializationConfig()
+                .addSerializer(new CustomerSerializer())
+                .addSerializer(new MerchantSerializer());
 
         //Start the client
         HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);

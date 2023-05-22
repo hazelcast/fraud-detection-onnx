@@ -1,12 +1,6 @@
 package org.example.datamodel;
 
-import com.hazelcast.nio.serialization.Portable;
-import com.hazelcast.nio.serialization.PortableReader;
-import com.hazelcast.nio.serialization.PortableWriter;
-
-import java.io.IOException;
-
-public class Customer  implements Portable {
+public class Customer {
     /*ssn,cc_num,first,last,gender,street,city,state,zip,latitude,longitude,city_pop,job,dob,acct_num,profile,age,setting,age_group*/
     private String ssn;
     private Long cc_num;
@@ -206,76 +200,5 @@ public class Customer  implements Portable {
 
     public void setStreet(String street) {
         this.street = street;
-    }
-
-
-    @Override
-    public int getFactoryId() {
-        return 2;
-    }
-
-    @Override
-    public int getClassId() {
-        return 2;
-    }
-
-    @Override
-    public void writePortable(PortableWriter writer) throws IOException {
-        /*ssn,cc_num,first,last,gender,street,city,state,zip,latitude,longitude,city_pop,job,dob,acct_num,profile,age,setting,age_group*/
-        writer.writeString("ssn", ssn);
-        if (cc_num!=null)
-            writer.writeLong("cc_num", Long.valueOf(cc_num));
-        writer.writeString("first", first);
-        writer.writeString("last", last);
-        writer.writeString("gender", gender);
-        writer.writeString("street", street);
-        writer.writeString("city", city);
-        writer.writeString("state", state);
-        writer.writeString("zip", zip);
-        if (latitude!=null)
-            writer.writeFloat("latitude", latitude.floatValue());
-        if (longitude!=null)
-            writer.writeFloat("longitude", longitude.floatValue());
-        writer.writeInt("city_pop", city_pop);
-        writer.writeString("job", job);
-        writer.writeString("dob", dob);
-        writer.writeString("acct_num", acct_num);
-        writer.writeString("profile", profile);
-        writer.writeInt("age", age);
-        writer.writeString("setting", setting);
-        writer.writeString("age_group", age_group);
-        if (code!=null) {
-            writer.writeLong("code", code);
-        }
-
-
-
-    }
-
-    @Override
-    public void readPortable(PortableReader reader) throws IOException {
-        ssn = reader.readString("ssn");
-        cc_num = Long.valueOf(reader.readLong("cc_num"));
-        first = reader.readString("first");
-        last = reader.readString("last");
-        gender = reader.readString("gender");
-        street = reader.readString("street");
-        city = reader.readString("city");
-        state = reader.readString("state");
-        zip = reader.readString("zip");
-        latitude = Float.valueOf(reader.readFloat("latitude"));
-        longitude = Float.valueOf(reader.readFloat("longitude"));
-        city_pop = reader.readInt("city_pop");
-        job = reader.readString("job");
-        dob = reader.readString("dob");
-        acct_num = reader.readString("acct_num");
-        profile = reader.readString("profile");
-        age = reader.readInt("age");
-        setting = reader.readString("setting");
-        age_group = reader.readString("age_group");
-        code = Long.valueOf(reader.readLong("code"));
-
-
-
     }
 }

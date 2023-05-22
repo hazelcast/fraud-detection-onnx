@@ -552,12 +552,10 @@ hazelcast:
   # differentiate two same classes that have changes on it like adding/removing
   # field or changing a type of a field.
   serialization:
-    portable-version: 1
-    portable-factories:
-      - factory-id: 1
-        class-name : org.example.datamodel.MerchantFactory
-      - factory-id: 2
-        class-name : org.example.datamodel.CustomerFactory
+    compact-serialization:
+      serializers:
+        - serializer: org.example.datamodel.MerchantSerializer
+        - serializer: org.example.datamodel.CustomerSerializer
 
   cardinality-estimator:
     default:
