@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   hazelcast-onnx:
-    image: docker.io/edsandovalhz/hz-onnx-all
+    image: docker.io/edsandovalhz/hz-onnx-compact
     ports:
       - "5701:5701"
     environment:
